@@ -1087,29 +1087,12 @@ footer { color: rgba(255, 255, 255, .6); background: #181818; border-radius: 64p
 .fit-card.is-stat span { font-size: 1.125rem; font-weight: 500; }
 .fit-card.is-stat p { color: rgba(255, 255, 255, .6) !important; margin-top: auto !important; }
 
-/* Роли сторон */
-.roles-table { margin-top: 36px; overflow: hidden; background: var(--reg-gray-lighter); border-radius: var(--reg-r-l); }
-.roles-row { display: grid; grid-template-columns: .8fr 1.2fr 1.2fr; gap: 24px; padding: 20px 28px; border-top: 1px solid var(--reg-gray-light); }
-.roles-row.is-head { color: var(--reg-gray-dark); background: #fff; border-top: 0; font-size: .8125rem; }
-.roles-row b { font-weight: 500; }
-.roles-row p { margin: 0; font-size: .9375rem; line-height: 1.5; }
-.roles-row p + p { color: var(--reg-gray-dark); }
-.roles-label { display: none; }
-
 /* Возможность бесплатной замены */
 .replacement-section { margin-top: 24px; margin-bottom: 24px; padding: 48px; background: var(--reg-accent-lighter); border-radius: var(--reg-r-xl); }
 .replacement-section h2 { margin-bottom: 14px; }
 .replacement-section p:not(.eyebrow) { max-width: 760px; margin: 0; color: var(--reg-black); font-size: 1.0625rem; line-height: 1.6; }
 
 /* Четыре способа привлечения */
-.methods-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 36px; }
-.method-card { display: flex; flex-direction: column; gap: 10px; padding: 28px; background: var(--reg-gray-lighter); border-radius: var(--reg-r-l); }
-.method-tag { align-self: flex-start; padding: 4px 10px; color: var(--reg-black); background: #fff; border: 1px solid var(--reg-gray); border-radius: 999px; font-size: .8125rem; }
-.method-card h3 { margin: 4px 0 0; font-size: 1.375rem; }
-.method-card > p { margin: 0; color: var(--reg-gray-dark); font-size: .9375rem; line-height: 1.55; }
-.method-note { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--reg-gray-light); }
-.method-note b { font-size: .875rem; font-weight: 500; }
-.method-note p { margin: 4px 0 0; color: var(--reg-gray-dark); font-size: .875rem; line-height: 1.5; }
 /* «Не уверены в способе?» — тот же вид, что у «Ваша задача» (.contact-section), только внутри секции */
 .methods-cta.contact-section { width: auto; margin-top: 16px; }
 .methods-cta h2 { margin-bottom: 14px; font-size: clamp(2rem, 3.4vw, 2.75rem); }
@@ -1117,12 +1100,6 @@ footer { color: rgba(255, 255, 255, .6); background: #181818; border-radius: 64p
 .methods-cta small { display: block; max-width: 760px; margin-top: 12px; color: rgba(255, 255, 255, .55); font-size: .8125rem; line-height: 1.5; }
 
 /* Примеры задач */
-.examples-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 36px; }
-.example-card { padding: 28px; background: var(--reg-gray-lighter); border-radius: var(--reg-r-l); }
-.example-card h3 { margin: 0 0 4px; font-size: 1.25rem; }
-.example-card > p { margin: 0 0 16px; color: var(--reg-gray-dark); font-size: .875rem; }
-.example-card ul { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
-.example-card li { padding: 6px 12px; background: #fff; border: 1px solid var(--reg-gray-light); border-radius: 999px; font-size: .8125rem; }
 
 /* «Шесть направлений»: подпись «Возможный материал / действие» */
 .feat-card.is-small { height: auto; min-height: 374px; gap: 24px; }
@@ -1130,20 +1107,15 @@ footer { color: rgba(255, 255, 255, .6); background: #181818; border-radius: 64p
 .feat-material b { display: block; color: var(--reg-gray-dark); font-size: 12px; font-weight: 400; text-transform: uppercase; letter-spacing: .04em; }
 
 @media (width <= 1150px) {
-  .fit-grid, .examples-grid { grid-template-columns: repeat(2, 1fr); }
+  .fit-grid { grid-template-columns: repeat(2, 1fr); }
   .fit-card.is-stat { grid-column: 1 / -1; }
 }
 @media (width <= 850px) {
-  .roles-row.is-head { display: none; }
-  .roles-row { grid-template-columns: 1fr; gap: 10px; padding: 20px; }
-  .roles-label { display: block; margin-bottom: 2px; color: var(--reg-gray-dark); font-size: .75rem; }
-  .roles-row p + p { color: var(--reg-black); }
-  .methods-grid { grid-template-columns: 1fr; }
 }
 @media (width <= 580px) {
-  .fit-grid, .examples-grid { grid-template-columns: 1fr; }
+  .fit-grid { grid-template-columns: 1fr; }
   .fit-block { padding: 0 0 48px; }
-  .fit-card, .method-card, .example-card { padding: 22px; }
+  .fit-card { padding: 22px; }
   .replacement-section { width: calc(100% - 32px); padding: 28px 22px; border-radius: var(--reg-r-l); }
   .hero-paths a { min-width: 0; width: 100%; }
 }
@@ -1379,14 +1351,9 @@ footer { color: rgba(255, 255, 255, .6); background: #181818; border-radius: 64p
 .rep-visual .cs-line { white-space: nowrap; }
 @media (width <= 580px) { .rep-visual .cs-row { width: 100%; } .rep-visual .cs-line { white-space: normal; } }
 
-/* «Люди и навыки…»: фон — картинка (тёмный верх, зелёный низ), растянута точно по блоку */
-.why-section { background: var(--reg-black-dark) url(why-bg.webp) center / 100% 100% no-repeat; }
+/* «Люди и навыки…»: тот же фон, что у десктопной плашки «5 шагов» (flow-bg.webp: тёмный слева, зелёный справа и снизу) */
+.why-section { background: #1b1c1f url(flow-bg.webp) center / cover no-repeat; }
 .why-item { background: rgba(20, 22, 25, .6); border-color: rgba(255, 255, 255, .14); }  /* тёмное стекло — текст читается и над зелёным */
-/* Картинка фона «Люди и навыки…» сдвинута вниз, чтобы зелёное свечение начиналось ниже ссылки «Посмотреть профессии».
-   Сверху открывается тёмная подложка того же цвета, что и верх картинки. На телефоне ссылка выше — сдвиг не нужен. */
-.why-section { background: #1b1c1f url(why-bg.webp) center 170px / 100% 100% no-repeat; }
-@media (width <= 1150px) { .why-section { background-position: center 110px; } }
-@media (width <= 580px) { .why-section { background-position: center; } }
 
 /* Плитка с готовой SVG-иллюстрацией (подложка, свечение и скругление уже внутри картинки) */
 .feat-tile.is-svg { background: none; }
@@ -1407,3 +1374,381 @@ footer { color: rgba(255, 255, 255, .6); background: #181818; border-radius: 64p
 .site-header { transition: background .3s, border-color .3s, transform .35s ease, opacity .35s ease; }
 .is-watching-video .site-header { transform: translateY(-100%); opacity: 0; pointer-events: none; }
 .is-watching-video .hero-close { top: 20px; }
+
+/* ——— «Пять этапов» в структуре галереи CleanShot ———
+   Десктоп (> 1024px): слева вертикальные вкладки (номер, название, описание, полоса прогресса),
+   справа окно-демо. ≤ 1024px: вкладки и окно скрыты, вместо них слайдер из 5 карточек —
+   у каждой своя копия окна (flow-demo.js) и подпись. */
+.flow-tabs button { white-space: normal; }                 /* сброс прежних правил для горизонтальных вкладок */
+.flow-tab-icon { display: none; }
+.flow-slider { display: none; }
+
+@media (width > 1024px) {
+  .flow-demo {
+    zoom: normal;
+    width: auto;
+    display: grid;
+    grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+    gap: 24px;
+    align-items: center;
+    padding: 24px;
+    border-radius: 42px;
+  }
+  .flow-window { zoom: .75; }                              /* окно — как уменьшенный скриншот, 720 → 540px */
+}
+
+.flow-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.flow-tabs button {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  justify-content: stretch;
+  gap: 14px;
+  min-height: 0;
+  padding: 18px 20px 20px;
+  overflow: hidden;
+  border-radius: 22px;
+  color: rgba(255, 255, 255, .62);
+  text-align: left;
+  font-size: 1rem;
+  line-height: 1.3;
+}
+.flow-tabs button:hover { color: #fff; background: rgba(255, 255, 255, .06); }
+.flow-tabs button[aria-selected=true] { color: var(--reg-black); background: #fff; font-weight: 400; }
+.flow-tab-num { padding-top: 1px; color: var(--reg-accent); font-size: .875rem; font-weight: 500; font-variant-numeric: tabular-nums; }
+.flow-tab-text { display: grid; gap: 6px; }
+.flow-tab-text b { font-size: 1.0625rem; font-weight: 500; letter-spacing: -.01em; }
+.flow-tab-text span { display: none; color: var(--reg-gray-dark); font-size: .875rem; line-height: 1.45; }
+.flow-tabs button[aria-selected=true] .flow-tab-text span { display: block; }   /* описание — только у активного этапа */
+
+/* Полоса прогресса активного этапа: заполняется за время показа (--flow-dur задаёт flow-demo.js) */
+.flow-tab-bar { position: absolute; inset: auto 20px 8px; height: 3px; border-radius: 3px; background: var(--reg-gray-lighter); opacity: 0; }
+.flow-tab-bar::after { content: ""; position: absolute; inset: 0; width: 0; border-radius: inherit; background: var(--reg-accent); }
+.flow-tabs button.is-playing .flow-tab-bar { opacity: 1; }
+.flow-tabs button.is-playing .flow-tab-bar::after { animation: flow-progress var(--flow-dur, 8s) linear forwards; }
+@keyframes flow-progress { to { width: 100%; } }
+
+/* Слайдер */
+@media (width <= 1024px) {
+  .flow-demo { --flow-gutter: 24px; zoom: normal; width: auto; margin-top: 32px; padding: 0; border-radius: 0; background: none; }
+  .flow-tabs, .flow-demo > .flow-window { display: none; }
+  .flow-slider { display: block; }
+
+  .flow-slides {
+    display: flex;
+    gap: 16px;
+    margin-inline: calc(-1 * var(--flow-gutter));
+    padding: 0 var(--flow-gutter) 4px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--flow-gutter);
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  .flow-slides::-webkit-scrollbar { display: none; }
+  .flow-slide { flex: 0 0 min(86%, 620px); scroll-snap-align: start; }
+
+  .flow-slide-media {
+    padding: 12px;
+    border-radius: var(--reg-r-l);
+    background: var(--reg-black-dark) url(services-bg.webp) center 70% / cover no-repeat;
+  }
+  .flow-slide .flow-window { border-radius: 16px; }
+  .flow-slide .flow-body,
+  .flow-slide .flow-app { height: 560px; }
+  .flow-slide .flow-body { grid-template-columns: 1fr; }
+  .flow-slide .flow-sidebar { display: none; }
+
+  .flow-slide-text { padding: 18px 4px 0; }
+  .flow-slide-num { color: var(--reg-accent); font-size: .875rem; font-weight: 500; }
+  .flow-slide-text h3 { margin: 6px 0 6px; font-size: 1.25rem; font-weight: 500; }
+  .flow-slide-text p { margin: 0; color: var(--reg-gray-dark); font-size: .9375rem; line-height: 1.5; }
+
+  .flow-slider-nav { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+  .flow-slider-nav button {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 0;
+    border-radius: 50%;
+    color: var(--reg-black);
+    background: var(--reg-gray-lighter);
+  }
+  .flow-slider-nav button:hover:not(:disabled) { background: var(--reg-gray-light); }
+  .flow-slider-nav button:disabled { cursor: default; opacity: .4; }
+}
+@media (width <= 580px) {
+  .flow-demo { --flow-gutter: 18px; margin-top: 24px; }
+  .flow-slides { gap: 12px; }
+  .flow-slide { flex-basis: 88%; }
+  .flow-slide-media { padding: 8px; border-radius: 20px; }
+  .flow-slide .flow-window { border-radius: 14px; }
+  .flow-slide .flow-body,
+  .flow-slide .flow-app { height: 500px; }
+}
+
+/* «5 шагов», десктоп: свой фон flow-bg.webp (тёмный слева под вкладками, зелёный справа и снизу под превью) */
+@media (width > 1024px) {
+  .flow-demo { background: var(--reg-black-dark) url(flow-bg.webp) center / cover no-repeat; }
+}
+
+/* Скругление окна-превью: шапка формы с backdrop-filter не обрезается по border-radius у overflow: hidden
+   (баг Chrome/Safari) — поэтому содержимое окна дополнительно режем clip-path по тому же радиусу */
+.flow-window { --flow-win-r: 28px; }
+.flow-window, .flow-slide .flow-window { border-radius: var(--flow-win-r); }   /* перебивает прежние радиусы окна в слайдере */
+.flow-window > .flow-app,
+.flow-window > .flow-body { clip-path: inset(0 round var(--flow-win-r)); }
+
+/* Карточки слайдера «5 шагов»: полупрозрачная рамка-подложка вокруг превью, как у GitHub —
+   окно стоит в «стекле» на градиенте и уходит под нижний край карточки (снизу без скруглений) */
+@media (width <= 1024px) {
+  .flow-slide .flow-slide-media { padding: 32px 32px 0; overflow: hidden; border-radius: var(--reg-r-l) var(--reg-r-l) 0 0; }
+  .flow-slide .flow-window {
+    --flow-win-r: 16px 16px 0 0;
+    box-shadow: 0 0 0 12px rgba(255, 255, 255, .14), 0 0 0 13px rgba(196, 244, 241, .45);
+  }
+}
+@media (width <= 580px) {
+  .flow-slide .flow-slide-media { padding: 18px 18px 0; border-radius: 20px 20px 0 0; }
+  .flow-slide .flow-window {
+    --flow-win-r: 12px 12px 0 0;
+    box-shadow: 0 0 0 7px rgba(255, 255, 255, .14), 0 0 0 8px rgba(196, 244, 241, .45);
+  }
+}
+
+/* «5 шагов», десктоп: та же полупрозрачная рамка-подложка вокруг превью, что в слайдере,
+   но окно целиком, со скруглениями со всех сторон. Окно уменьшено zoom .75, поэтому размеры тени
+   заданы с запасом: 16px → 12px на экране. Отступы плашки и колонок увеличены под рамку */
+@media (width > 1024px) {
+  .flow-demo { gap: 40px; padding: 36px; }
+  .flow-window {
+    box-shadow:
+      0 0 0 16px rgba(255, 255, 255, .14),
+      0 0 0 17px rgba(196, 244, 241, .45),
+      0 32px 80px rgba(0, 0, 0, .35);
+  }
+}
+
+/* ——— «Примеры задач для специалистов» — слайдер карточек по мотивам галереи CleanShot ———
+   Карточка: сверху цветная плашка с мягким градиентом (наши мятные/бирюзовые тона) и стеклянными
+   чипсами профессий (как в карточке «Понятные роли и требования»), снизу название и описание.
+   Лента выходит за правый край контейнера до края окна; стрелки — в script.js */
+main { overflow-x: clip; }              /* лента слайдера выходит за контейнер — без горизонтальной прокрутки страницы */
+.ex-slider { --ex-g: max(40px, (100vw - 1240px) / 2); margin-top: 36px; }   /* --ex-g — поле .container по бокам */
+@media (width <= 1150px) { .ex-slider { --ex-g: 24px; } }
+@media (width <= 580px) { .ex-slider { --ex-g: 18px; } }
+.ex-slides {
+  display: flex;
+  gap: 24px;
+  margin-inline: calc(-1 * var(--ex-g));
+  padding: 0 var(--ex-g) 4px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--ex-g);
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.ex-slides::-webkit-scrollbar { display: none; }
+.ex-card { flex: 0 0 min(520px, 82%); scroll-snap-align: start; }
+
+.ex-media {
+  display: flex;
+  align-items: flex-end;
+  min-height: 340px;
+  padding: 32px;
+  border-radius: var(--reg-r-l);
+}
+.ex-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+
+/* У каждой карточки свой пастельный градиент — как у CleanShot, но в акцентных цветах */
+.ex-card:nth-child(1) .ex-media {
+  background:
+    radial-gradient(60% 55% at 15% 20%, rgba(255, 255, 255, .7), transparent 70%),
+    radial-gradient(55% 60% at 85% 85%, rgba(17, 213, 203, .55), transparent 70%),
+    radial-gradient(50% 50% at 30% 100%, rgba(125, 255, 214, .6), transparent 70%),
+    linear-gradient(160deg, #d9f6f0 0%, #aeeadf 100%);
+}
+.ex-card:nth-child(2) .ex-media {
+  background:
+    radial-gradient(55% 55% at 90% 10%, rgba(0, 245, 140, .35), transparent 70%),
+    radial-gradient(60% 60% at 10% 90%, rgba(17, 213, 203, .5), transparent 70%),
+    radial-gradient(45% 45% at 60% 55%, rgba(255, 255, 255, .6), transparent 70%),
+    linear-gradient(200deg, #d6f3ec 0%, #a5e6da 100%);
+}
+.ex-card:nth-child(3) .ex-media {
+  background:
+    radial-gradient(60% 55% at 80% 90%, rgba(0, 245, 140, .45), transparent 70%),
+    radial-gradient(50% 55% at 15% 30%, rgba(125, 255, 214, .55), transparent 70%),
+    radial-gradient(40% 40% at 55% 10%, rgba(255, 255, 255, .7), transparent 70%),
+    linear-gradient(180deg, #dcf7e7 0%, #b0ecca 100%);
+}
+.ex-card:nth-child(4) .ex-media {
+  background:
+    radial-gradient(60% 60% at 20% 85%, rgba(17, 213, 203, .6), transparent 70%),
+    radial-gradient(55% 50% at 85% 25%, rgba(196, 244, 241, .9), transparent 70%),
+    radial-gradient(40% 40% at 75% 95%, rgba(0, 245, 140, .3), transparent 70%),
+    linear-gradient(140deg, #d3f4f1 0%, #9fe3dc 100%);
+}
+.ex-card:nth-child(5) .ex-media {
+  background:
+    radial-gradient(55% 55% at 85% 80%, rgba(125, 255, 214, .65), transparent 70%),
+    radial-gradient(50% 50% at 20% 15%, rgba(17, 213, 203, .4), transparent 70%),
+    radial-gradient(45% 45% at 40% 70%, rgba(255, 255, 255, .55), transparent 70%),
+    linear-gradient(220deg, #daf5ee 0%, #ade9d8 100%);
+}
+
+.ex-text { padding: 22px 4px 0; }
+.ex-text h3 { margin: 0 0 8px; font-size: 1.5rem; font-weight: 500; letter-spacing: -.02em; }
+.ex-text p { margin: 0; color: var(--reg-gray-dark); font-size: 1rem; line-height: 1.5; }
+
+.ex-nav, .methods-nav { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+.ex-nav button, .methods-nav button {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 50%;
+  color: var(--reg-black);
+  background: var(--reg-gray-lighter);
+}
+.ex-nav button:hover:not(:disabled), .methods-nav button:hover:not(:disabled) { background: var(--reg-gray-light); }
+.ex-nav button:disabled, .methods-nav button:disabled { cursor: default; opacity: .4; }
+
+@media (width <= 580px) {
+  .ex-slides { gap: 12px; }
+  .ex-card { flex-basis: 86%; }
+  .ex-media { min-height: 280px; padding: 20px; border-radius: 20px; }
+  .ex-text { padding-top: 18px; }
+  .ex-text h3 { font-size: 1.25rem; }
+  .ex-text p { font-size: .9375rem; }
+}
+
+/* «Примеры задач»: фото отрасли под градиентом — слегка проступает в верхней части карточки,
+   к чипсам внизу полностью растворяется. Фото — в examples/, у каждой карточки своё */
+.ex-media { position: relative; isolation: isolate; overflow: hidden; }
+.ex-media::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--ex-photo) center 30% / cover no-repeat;
+  opacity: .38;
+  mix-blend-mode: luminosity;                                   /* фото берёт мятный тон градиента */
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, .6) 35%, transparent 70%);
+  mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, .6) 35%, transparent 70%);
+}
+.ex-card:nth-child(1) .ex-media { --ex-photo: url(examples/construction.webp); }
+.ex-card:nth-child(2) .ex-media { --ex-photo: url(examples/production.webp); }
+.ex-card:nth-child(3) .ex-media { --ex-photo: url(examples/agriculture.webp); }
+.ex-card:nth-child(4) .ex-media { --ex-photo: url(examples/logistics.webp); }
+.ex-card:nth-child(5) .ex-media { --ex-photo: url(examples/utilities.webp); }
+
+/* ——— «Четыре способа привлечения» — в стиле «Люди и навыки…» ———
+   Тёмная скруглённая плашка с фоном flow-bg.webp, светлый текст. Карточки — тёмное стекло,
+   в ряд горизонтальной лентой (как на reg.ru): лента уходит за правый край плашки, листается стрелками
+   (script.js). «Что важно учитывать» — аккордеон на <details>. Плашка «Не уверены в способе?» вынесена под секцию */
+.methods-section {
+  --m-g: max(40px, (100vw - 32px - 1240px) / 2);     /* поле .container внутри плашки */
+  margin: 0 16px;
+  padding: 88px 0;
+  overflow: hidden;
+  color: #fff;
+  background: #1b1c1f url(flow-bg.webp) center / cover no-repeat;
+  border-radius: var(--reg-r-xl);
+}
+.methods-section .eyebrow { color: rgba(255, 255, 255, .6); }
+.methods-section h2 { color: #fff; }
+.methods-section .section-heading > p:last-child:not(.eyebrow) { color: rgba(255, 255, 255, .72); }
+
+
+.methods-slides {
+  display: flex;
+  align-items: stretch;                                 /* карточки одной высоты */
+  gap: 16px;
+  margin: 36px calc(-1 * var(--m-g)) 0;
+  padding: 0 var(--m-g);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--m-g);
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.methods-slides::-webkit-scrollbar { display: none; }
+.method-card {
+  display: flex;
+  flex: 0 0 min(420px, 86%);
+  flex-direction: column;
+  gap: 10px;
+  padding: 28px;
+  scroll-snap-align: start;
+  background: rgba(20, 22, 25, .6);
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: var(--reg-r-l);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+.method-tag {
+  align-self: flex-start;
+  padding: 5px 12px;
+  color: var(--reg-accent);
+  background: rgba(17, 213, 203, .1);
+  border: 1px solid rgba(17, 213, 203, .35);
+  border-radius: 999px;
+  font-size: .8125rem;
+  font-weight: 500;
+}
+.method-card h3 { margin: 4px 0 0; color: #fff; font-size: 1.25rem; font-weight: 500; letter-spacing: -.02em; }
+.method-card > p { margin: 0; color: rgba(255, 255, 255, .65); font-size: .9375rem; line-height: 1.55; }
+
+/* Аккордеон «Что важно учитывать» */
+.method-note { margin-top: auto; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, .14); }
+.method-note summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #fff;
+  font-size: .9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  list-style: none;
+}
+.method-note summary::-webkit-details-marker { display: none; }
+.method-note summary:hover { color: var(--reg-accent); }
+.method-chevron { flex-shrink: 0; color: rgba(255, 255, 255, .7); transition: transform .25s, color .25s; }
+.method-note summary:hover .method-chevron,
+.method-note[open] .method-chevron { color: var(--reg-accent); }
+.method-note[open] .method-chevron { transform: rotate(180deg); }            /* шеврон разворачивается вверх */
+.method-note p { margin: 10px 0 0; color: rgba(255, 255, 255, .65); font-size: .875rem; line-height: 1.5; }
+
+.methods-cta-wrap { margin-top: 16px; }
+.methods-cta-wrap .methods-cta.contact-section { margin-top: 0; }
+
+@media (width <= 1150px) { .methods-section { --m-g: 24px; } }
+@media (width <= 850px) { .methods-section { padding: 64px 0; } }
+@media (width <= 580px) {
+  .methods-section { --m-g: 18px; margin: 0 8px; padding: 54px 0; border-radius: var(--reg-r-l); }
+  .methods-slides { gap: 12px; }
+  .method-card { flex-basis: 88%; padding: 22px; }
+}
+
+/* Отступы: «Не уверены в способе?» отделена сверху так же, как снизу (= отступ секции «Примеры задач»);
+   у «Возможности бесплатной замены» отступ снизу равен верхнему */
+.methods-cta-wrap { margin-top: 100px; }
+.replacement-section { margin-bottom: 124px; }
+@media (width <= 850px) { .methods-cta-wrap { margin-top: 70px; } .replacement-section { margin-bottom: 94px; } }
+@media (width <= 580px) { .methods-cta-wrap { margin-top: 58px; } .replacement-section { margin-bottom: 82px; } }

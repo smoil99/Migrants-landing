@@ -436,3 +436,30 @@ dialog.addEventListener('click', event => { if (event.target === dialog) closeLe
 // Начальное состояние
 if ($('[data-variant]')) setVariant(new URLSearchParams(location.search).get('variant') === 'focus' ? 'focus' : 'editorial', false);
 if (textarea) onQueryInput();
+
+/* ——— Слайдеры-ленты «Способы привлечения» и «Примеры задач»: стрелки листают по одной карточке ——— */
+function initSlider(box, prev, next) {
+  if (!box || !prev || !next) return;
+  const cards = [...box.children];
+  const left = i => cards[i].offsetLeft - cards[0].offsetLeft;
+  const current = () => {
+    let best = 0;
+    cards.forEach((_, i) => { if (Math.abs(left(i) - box.scrollLeft) < Math.abs(left(best) - box.scrollLeft)) best = i; });
+    return best;
+  };
+  const update = () => {
+    prev.disabled = box.scrollLeft <= 2;
+    next.disabled = box.scrollLeft >= box.scrollWidth - box.clientWidth - 2;
+  };
+  const go = step => {
+    const i = Math.max(0, Math.min(cards.length - 1, current() + step));
+    box.scrollTo({ left: left(i), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  };
+  prev.addEventListener('click', () => go(-1));
+  next.addEventListener('click', () => go(1));
+  box.addEventListener('scroll', update, { passive: true });
+  addEventListener('resize', update);
+  update();
+}
+initSlider($('[data-m-slides]'), $('[data-m-prev]'), $('[data-m-next]'));
+initSlider($('[data-ex-slides]'), $('[data-ex-prev]'), $('[data-ex-next]'));
