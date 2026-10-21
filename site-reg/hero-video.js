@@ -54,6 +54,24 @@
   video.addEventListener('ended', close);
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && watching) close(); });
 
+  // Затемнение при прокрутке: чем больше следующая секция наезжает на закреплённый первый экран,
+  // тем он темнее (--hero-dim от 0 до DIM_MAX, слой .hero::after); максимум — уже на DIM_AT перекрытия
+  const DIM_MAX = 0.85;
+  const DIM_AT = 0.5;
+  const cover = hero.nextElementSibling;
+  let dimQueued = false;
+  function updateDim() {
+    dimQueued = false;
+    if (!cover || watching) { hero.style.setProperty('--hero-dim', 0); return; }
+    const h = hero.offsetHeight;
+    const covered = hero.getBoundingClientRect().bottom - cover.getBoundingClientRect().top;
+    hero.style.setProperty('--hero-dim', (Math.min(Math.max(covered / (h * DIM_AT), 0), 1) * DIM_MAX).toFixed(3));
+  }
+  const scheduleDim = () => { if (!dimQueued) { dimQueued = true; requestAnimationFrame(updateDim); } };
+  addEventListener('scroll', scheduleDim, { passive: true });
+  addEventListener('resize', scheduleDim);
+  updateDim();
+
   // Фоновое видео не крутится, когда первого экрана не видно
   new IntersectionObserver(([entry]) => {
     onScreen = entry.isIntersecting;

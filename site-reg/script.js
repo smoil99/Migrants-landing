@@ -164,9 +164,20 @@ function toggleFaq(index, forceOpen = false) {
     item.classList.toggle('expanded', open);
     const btn = $('h3 button', item);
     btn.setAttribute('aria-expanded', String(open));
-    $('.faq-plus', item).textContent = open ? '−' : '+';
-    $(`#faq-answer-${i}`).hidden = !open;
+    $(`#faq-answer-${i}`).inert = !open;               // закрытый ответ не доступен с клавиатуры; раскрытие — в CSS
   });
+}
+
+// Нажатый вопрос остаётся на месте, пока сворачивается открытый выше ответ, — аккордеон всегда раскрывается вниз
+function keepInPlace(el, ms = 450) {
+  const top = el.getBoundingClientRect().top;
+  const start = performance.now();
+  const step = now => {
+    const shift = el.getBoundingClientRect().top - top;
+    if (Math.abs(shift) > 0.5) window.scrollTo({ top: scrollY + shift, behavior: 'instant' });
+    if (now - start < ms) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
 }
 
 function filterFaq(topic) {
@@ -397,7 +408,7 @@ document.addEventListener('click', event => {
   if (step) return selectStep(step);
   if (industry) return selectIndustry(industry);
   if (topic && el.closest('.faq-filters')) return filterFaq(topic);
-  if (el.matches('.faq-item h3 button')) return toggleFaq(faqItems().indexOf(el.closest('.faq-item')));
+  if (el.matches('.faq-item h3 button')) { keepInPlace(el); return toggleFaq(faqItems().indexOf(el.closest('.faq-item'))); }
   if (el.matches('.menu-button')) return setMenu(!$('.nav').classList.contains('mobile-open'));
   if (el.closest('.nav')) return setMenu(false);
 });
@@ -463,3 +474,12 @@ function initSlider(box, prev, next) {
 }
 initSlider($('[data-m-slides]'), $('[data-m-prev]'), $('[data-m-next]'));
 initSlider($('[data-ex-slides]'), $('[data-ex-prev]'), $('[data-ex-next]'));
+
+/* ——— «Что важно учитывать» в карточках способов привлечения: аккордеон, раскрытие — в CSS (как у FAQ) ——— */
+$$('.method-toggle').forEach(btn => btn.addEventListener('click', () => {
+  const note = btn.closest('.method-note');
+  const open = !note.classList.contains('is-open');
+  note.classList.toggle('is-open', open);
+  btn.setAttribute('aria-expanded', String(open));
+  $(`#${btn.getAttribute('aria-controls')}`).inert = !open;
+}));
