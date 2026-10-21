@@ -3,24 +3,27 @@
   Десктоп (> 1024px): слева вкладки-этапы с полосой прогресса, справа одно окно-демо; этапы идут по кругу.
   ≤ 1024px: слайдер из 5 карточек; в каждой своя копия окна, показывающая только свой этап.
     Активная карточка проигрывает этап по кругу, остальные показывают его итоговый кадр.
-  Шаг 1 — экран формы заявки: бриф распознаётся, 20 полей заполняются за FORM_FILL мс,
-  страница прокручивается следом, курсор нажимает «Отправить заявку», открывается окно «Готово».
-  Шаги 2–5 — рабочий чат: сообщения появляются по очереди; у сообщения с data-status сначала статус, потом текст.
-  Тексты и значения полей — в index.html (секция #flow), подписи карточек слайдера берутся из вкладок.
+  Шаг 1 — экран формы заявки: режим «Загрузить файл» уже выбран, курсор приносит файл из-за края окна
+  и перетаскивает его в зону загрузки; пока файл распознаётся, поля — скелетон, затем 10 полей заполняются
+  за FORM_FILL мс, страница прокручивается следом, курсор нажимает «Отправить заявку», открывается окно «Готово».
+  Шаги 2–5 — экраны личного кабинета (по макетам Figma): 2 — список кандидатов заполняется, курсор открывает
+  кандидата; 3 — курсор листает вкладки кандидата и нажимает «Одобрить»; 4 — курсор запускает и завершает услуги;
+  5 — пункты чек-листа отмечаются, статус «Вышел на работу».
+  Тексты — в index.html (секция #flow), подписи карточек слайдера берутся из вкладок.
 */
 (() => {
   const root = document.querySelector('[data-flow]');
   if (!root) return;
 
   // Тайминги, мс
-  const FORM_FILL = 5000;       // заполнение 20 полей формы
-  const BRIEF = 900;            // «Распознаём бриф…» перед заполнением
-  const CURSOR_MOVE = 800;      // курсор едет к кнопке
+  const FORM_FILL = 4000;       // прокрутка формы до кнопки с постоянной скоростью; за это время заполняются 10 полей
+  const REVEAL_GAP = 150;       // минимальный промежуток между появлением значений в соседних полях
+  const SKELETON = 1400;        // все поля — скелетон, прежде чем начнут появляться значения
+  const CURSOR_MOVE = 800;      // одно перемещение курсора (совпадает с transition у .fa-cursor)
   const SENT_HOLD = 3800;       // сколько показывается окно «Готово» перед следующим шагом
-  const FIRST_DELAY = 500;      // чат: перед первым сообщением
-  const BETWEEN = 1100;         // чат: между сообщениями
-  const THINKING = 1500;        // чат: статус «думает»
-  const HOLD = 3200;            // чат: пауза после последнего сообщения
+  const ROW_GAP = 320;          // шаг 2: между появлением строк кандидатов
+  const CHECK_GAP = 420;        // шаг 5: между отметками пунктов чек-листа
+  const SCREEN_HOLD = 3000;     // шаги 2–5: пауза на итоговом кадре перед следующим шагом
 
   const tabs = [...root.querySelectorAll('[data-flow-tab]')];
   const stage = root.querySelector('.flow-window');
@@ -30,28 +33,18 @@
   const sliderMode = matchMedia('(width <= 1024px)');
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Статус «думает» у сообщений — до копирования окна, чтобы он попал во все копии
-  root.querySelectorAll('.flow-msg[data-status]').forEach(msg => {
-    const status = document.createElement('p');
-    status.className = 'flow-status';
-    status.textContent = msg.dataset.status;
-    msg.querySelector('.flow-text').before(status);
-  });
-
   /* ——— Окно-демо: умеет показать любой этап. play() возвращает длительность показа, мс ——— */
   function createDemo(win) {
-    // Чат
-    const chat = win.querySelector('.flow-body');
-    const scenarios = [...win.querySelectorAll('.flow-scenario')];
-    const messagesBox = win.querySelector('.flow-messages');
-    const channelLabels = [...win.querySelectorAll('[data-flow-channel]')];
-    const channelItems = [...win.querySelectorAll('.flow-channels [data-channel]')];
+    // Экраны шагов 2–5
+    const screens = [...win.querySelectorAll('[data-flow-screen]')];
 
     // Экран формы
     const app = win.querySelector('[data-flow-app]');
     const scroller = app.querySelector('.fa-scroll');
     const fields = [...app.querySelectorAll('.fa-field')];
     const brief = app.querySelector('.fa-brief');
+    const drop = app.querySelector('[data-fa-drop]');
+    const upload = app.querySelector('[data-fa-upload]');
     const briefStatus = app.querySelector('[data-fa-brief]');
     const submit = app.querySelector('.fa-submit');
     const cursor = app.querySelector('.fa-cursor');
@@ -74,29 +67,27 @@
     };
 
     function show(index) {
-      const isForm = index === 0;
-      app.hidden = !isForm;
-      chat.hidden = isForm;
-      if (isForm) return;
-      const scenario = scenarios.find(s => s.dataset.tab === String(index));
-      scenarios.forEach(s => { s.hidden = s !== scenario; });
-      channelLabels.forEach(el => { el.textContent = scenario.dataset.channel; });
-      channelItems.forEach(li => li.classList.toggle('is-active', li.dataset.channel === scenario.dataset.channel));
+      app.hidden = index !== 0;
+      screens.forEach((screen, i) => { screen.hidden = i + 1 !== index; });
     }
 
     /* Шаг 1: форма */
     function resetForm() {
       scroller.scrollTop = 0;
+      app.classList.remove('is-parsing');
+      upload.classList.add('is-active');                 // режим «Загрузить файл» выбран сразу
+      drop.hidden = false;
+      drop.classList.remove('is-over', 'has-file');
       brief.classList.remove('is-done');
       briefStatus.textContent = 'Распознаём…';
       fields.forEach(f => {
-        f.classList.remove('is-filled', 'is-active');
+        f.classList.remove('is-filled', 'is-active', 'is-revealed');
         const v = f.querySelector('.fa-value');
         if (v) v.textContent = '';
         f.querySelectorAll('.fa-chips span').forEach(c => c.classList.remove('is-selected'));
       });
       submit.classList.remove('is-pressed');
-      cursor.classList.remove('is-visible', 'is-click');
+      cursor.classList.remove('is-visible', 'is-click', 'has-file');
       cursor.style.transition = 'none';
       cursor.style.transform = `translate(${app.clientWidth * 0.62}px, ${app.clientHeight * 0.55}px)`;
       dim.hidden = true;
@@ -123,8 +114,11 @@
     function formFinal() {
       resetForm();
       fields.forEach(f => { setField(f, f.dataset.value); f.classList.add('is-filled'); });
+      upload.classList.add('is-active');
+      drop.hidden = false;
+      drop.classList.add('has-file');
       brief.classList.add('is-done');
-      briefStatus.textContent = 'Распознано · 20 полей заполнено';
+      briefStatus.textContent = 'Распознано · 10 полей заполнено';
       showSent();
     }
 
@@ -158,94 +152,291 @@
       rafId = requestAnimationFrame(scrollLoop);
     }
 
+    // Курсор — в точку элемента (rx, ry — доли его ширины и высоты), в координатах окна-демо
+    function cursorTo(el, rx, ry) {
+      const a = app.getBoundingClientRect();
+      const b = el.getBoundingClientRect();
+      const z = zoom();
+      cursor.style.transform = `translate(${(b.left - a.left + b.width * rx) / z}px, ${(b.top - a.top + b.height * ry) / z}px)`;
+    }
+    function click(at, onPress) {
+      later(() => { cursor.classList.add('is-click'); onPress?.(); }, at);
+      later(() => cursor.classList.remove('is-click'), at + 180);
+    }
+
     function playForm() {
       resetForm();
 
-      // Маршрут прокрутки: от начала заполнения до кнопки «Отправить заявку», без остановок
-      const slot = FORM_FILL / fields.length;
-      const start = BRIEF + 200;
-      let last = 0;
-      path = [{ t: start, top: 0 }];
-      fields.forEach((field, i) => {
-        last = Math.max(last, scrollFor(field, 0.45));
-        path.push({ t: start + (i + 0.5) * slot, top: last });
-      });
-      path.push({ t: start + FORM_FILL + 400, top: Math.max(last, scrollFor(submit, 0.6)) });
-      pathStart = performance.now();
-      rafId = requestAnimationFrame(scrollLoop);
-
-      // 1. Бриф распознаётся
-      later(() => { brief.classList.add('is-done'); briefStatus.textContent = 'Распознано · заполняем форму'; }, BRIEF);
-
-      // 2. Поля заполняются по очереди, страница едет следом
-      fields.forEach((field, i) => {
-        const value = field.dataset.value;
-        const begin = start + i * slot;
-        later(() => field.classList.add('is-active'), begin);
-        if (field.dataset.type === 'chips') {
-          later(() => setField(field, value), begin + slot * 0.45);
-        } else {
-          const step = (slot * 0.75) / value.length;
-          const out = field.querySelector('.fa-value');
-          [...value].forEach((_, k) => later(() => { out.textContent = value.slice(0, k + 1); }, begin + (k + 1) * step));
-        }
-        later(() => { field.classList.remove('is-active'); field.classList.add('is-filled'); }, begin + slot);
-      });
-
-      // 3. Докрутить до кнопки, курсор едет к ней и нажимает
-      const filled = start + FORM_FILL;
-      later(() => { briefStatus.textContent = 'Распознано · 20 полей заполнено'; }, filled);
+      // 1. Курсор с файлом заходит из-за правого края окна и тащит файл в зону загрузки
       later(() => {
         const a = app.getBoundingClientRect();
-        const b = submit.getBoundingClientRect();
-        const z = zoom();
-        cursor.style.transition = '';
-        cursor.classList.add('is-visible');
-        cursor.style.transform = `translate(${(b.left - a.left + b.width * 0.55) / z}px, ${(b.top - a.top + b.height * 0.35) / z}px)`;
-      }, filled + 500);
-      const click = filled + 500 + CURSOR_MOVE + 150;
-      later(() => { cursor.classList.add('is-click'); submit.classList.add('is-pressed'); }, click);
-      later(() => { cursor.classList.remove('is-click'); submit.classList.remove('is-pressed'); }, click + 180);
+        const b = drop.getBoundingClientRect();
+        cursor.style.transform = `translate(${app.offsetWidth + 40}px, ${(b.top - a.top) / zoom() + 20}px)`;
+        cursor.classList.add('is-visible', 'has-file');
+      }, 100);
+      const back = 300;
+      later(() => { cursor.style.transition = ''; cursorTo(drop, 0.45, 0.5); }, back);
+      later(() => drop.classList.add('is-over'), back + CURSOR_MOVE * 0.6);
 
-      // 4. Экран «Отправлена»
-      later(() => { path = null; cursor.classList.remove('is-visible'); showSent(); }, click + 350);
-      return click + 350 + SENT_HOLD;
-    }
-
-    /* Шаги 2–5: чат */
-    const messagesOf = index => [...scenarios.find(s => s.dataset.tab === String(index)).querySelectorAll('.flow-msg')];
-
-    function chatFinal(index) {
-      messagesOf(index).forEach(m => { m.classList.add('is-shown'); m.classList.remove('is-thinking'); });
-      messagesBox.scrollTop = messagesBox.scrollHeight;
-    }
-
-    function playChat(index) {
-      const msgs = messagesOf(index);
-      msgs.forEach(m => m.classList.remove('is-shown', 'is-thinking'));
-      messagesBox.scrollTop = 0;
-      const scrollDown = () => { messagesBox.scrollTop = messagesBox.scrollHeight; };
-
-      let t = FIRST_DELAY;
-      msgs.forEach(msg => {
-        if (msg.dataset.status) {
-          later(() => { msg.classList.add('is-shown', 'is-thinking'); scrollDown(); }, t);
-          t += THINKING;
-          later(() => { msg.classList.remove('is-thinking'); scrollDown(); }, t);
-        } else {
-          later(() => { msg.classList.add('is-shown'); scrollDown(); }, t);
-        }
-        t += BETWEEN;
+      // 2. Файл брошен в зону: файл распознаётся, поля — скелетон
+      const dropAt = back + CURSOR_MOVE + 150;
+      click(dropAt, () => {
+        cursor.classList.remove('has-file');
+        drop.classList.remove('is-over');
+        drop.classList.add('has-file');
+        app.style.setProperty('--fa-parse', `${SKELETON + FORM_FILL}ms`);
+        app.classList.add('is-parsing');
       });
-      return t + HOLD;
+      later(() => cursor.classList.remove('is-visible'), dropAt + 400);
+
+      // 3. Страница прокручивается с постоянной скоростью от начала формы до кнопки «Отправить заявку»;
+      //    значение появляется в поле, когда прокрутка доводит поле до середины окна
+      const start = dropAt + SKELETON;
+      later(() => {
+        const end = scrollFor(submit, 0.6);
+        path = [{ t: 0, top: 0 }, { t: FORM_FILL, top: end }];
+        pathStart = performance.now();
+        rafId = requestAnimationFrame(scrollLoop);
+        briefStatus.textContent = 'Распознаём · заполняем форму';
+
+        let prev = -REVEAL_GAP;
+        fields.forEach(field => {
+          const at = Math.max(prev + REVEAL_GAP, end ? FORM_FILL * scrollFor(field, 0.45) / end : 0);
+          prev = at;
+          later(() => {
+            setField(field, field.dataset.value);
+            field.classList.add('is-filled', 'is-active', 'is-revealed');
+          }, at);
+          later(() => field.classList.remove('is-active'), at + 450);
+        });
+      }, start);
+
+      // 4. Всё распознано — курсор нажимает «Отправить заявку»
+      const filled = start + FORM_FILL;
+      later(() => {
+        app.classList.remove('is-parsing');
+        brief.classList.add('is-done');
+        briefStatus.textContent = 'Распознано · 10 полей заполнено';
+      }, filled);
+      later(() => { cursor.classList.add('is-visible'); cursorTo(submit, 0.55, 0.35); }, filled + 500);
+      const send = filled + 500 + CURSOR_MOVE + 150;
+      click(send, () => submit.classList.add('is-pressed'));
+      later(() => submit.classList.remove('is-pressed'), send + 180);
+
+      // 5. Экран «Отправлена»
+      later(() => { path = null; cursor.classList.remove('is-visible'); showSent(); }, send + 350);
+      return send + 350 + SENT_HOLD;
     }
+
+    /* ——— Шаги 2–5: экраны личного кабинета ——— */
+
+    // Исходные статусы, кнопки и метки запоминаются, чтобы сбрасывать экран перед каждым показом
+    win.querySelectorAll('[data-fs-status], [data-fs-svc-status], [data-fs-svc-btn]').forEach(el => {
+      el.dataset.init = `${el.className}|${el.textContent}`;
+    });
+    win.querySelectorAll('.fs-state').forEach(el => { el.dataset.html = el.innerHTML; });
+    const setChip = (el, cls, text) => { el.className = `fs-chip ${cls} is-flash`; el.textContent = text; };
+
+    function resetScreen(screen) {
+      screen.querySelector('.fa-scroll').scrollTop = 0;
+      screen.querySelectorAll('[data-init]').forEach(el => { [el.className, el.textContent] = el.dataset.init.split('|'); });
+      screen.querySelectorAll('.fs-state').forEach(el => { el.innerHTML = el.dataset.html; });
+      screen.querySelectorAll('.is-in, .is-pressed, .is-done').forEach(el => el.classList.remove('is-in', 'is-pressed', 'is-done'));
+      screen.querySelectorAll('.fs-reveal, .is-filling').forEach(el => el.classList.remove('fs-reveal', 'is-filling'));
+      screen.querySelectorAll('[data-fs-added]').forEach(el => el.remove());
+      const toast = screen.querySelector('[data-fs-toast]');
+      if (toast) toast.hidden = true;
+    }
+
+    // Курсор экрана: перемещение к элементу (rx, ry — доли его ширины и высоты) и клик
+    function pointer(screen) {
+      const cur = screen.querySelector('.fa-cursor');
+      const k = () => screen.getBoundingClientRect().width / screen.offsetWidth || 1;
+      cur.classList.remove('is-visible', 'is-click');
+      cur.style.transition = 'none';
+      cur.style.transform = `translate(${screen.offsetWidth * 0.7}px, ${screen.offsetHeight * 0.85}px)`;
+      return {
+        to(el, rx = 0.5, ry = 0.5) {
+          const a = screen.getBoundingClientRect();
+          const b = el.getBoundingClientRect();
+          cur.style.transition = '';
+          cur.classList.add('is-visible');
+          cur.style.transform = `translate(${(b.left - a.left + b.width * rx) / k()}px, ${(b.top - a.top + b.height * ry) / k()}px)`;
+        },
+        click(at, fn) {
+          later(() => { cur.classList.add('is-click'); fn(); }, at);
+          later(() => cur.classList.remove('is-click'), at + 180);
+        },
+        hide() { cur.classList.remove('is-visible'); },
+      };
+    }
+
+    // Плавно докрутить экран, если элемент ниже видимой области; scrollHome — обратно наверх
+    function reveal(screen, el) {
+      const sc = screen.querySelector('.fa-scroll');
+      const k = screen.getBoundingClientRect().width / screen.offsetWidth || 1;
+      const over = (el.getBoundingClientRect().bottom - sc.getBoundingClientRect().bottom) / k + 24;
+      if (over > 0) sc.scrollTo({ top: sc.scrollTop + over, behavior: 'smooth' });
+    }
+    const scrollHome = screen => screen.querySelector('.fa-scroll').scrollTo({ top: 0, behavior: 'smooth' });
+    // Элементы контейнера появляются по очереди
+    function stagger(box) {
+      box.classList.add('fs-reveal');
+      [...box.children].forEach((child, i) => later(() => child.classList.add('is-in'), 80 + 120 * i));
+    }
+
+    // Шаг 2. Список кандидатов заполняется, счётчик растёт, курсор открывает первого кандидата
+    function candidates(screen, animate) {
+      const p = pointer(screen);
+      const list = screen.querySelector('[data-fs-rows]');
+      const rows = [...list.children];
+      const count = screen.querySelector('[data-fs-count]');
+      const total = Number(count.dataset.fsCount);
+      count.textContent = total;
+      if (!animate) return 0;
+
+      list.classList.add('is-filling');
+      count.textContent = '0';
+      let t = 400;
+      rows.forEach((row, i) => {
+        later(() => {
+          row.classList.add('is-in');
+          count.textContent = Math.round(total * (i + 1) / rows.length);
+          reveal(screen, row);
+        }, t);
+        t += ROW_GAP;
+      });
+      t += 700;
+      later(() => scrollHome(screen), t);
+      t += 600;
+      later(() => {
+        const go = rows[0].querySelector('.fs-go');
+        if (go.offsetWidth) p.to(go); else p.to(rows[0], 0.85, 0.4);
+      }, t);
+      t += CURSOR_MOVE + 150;
+      p.click(t, () => rows[0].classList.add('is-pressed'));
+      later(() => p.hide(), t + 900);
+      return t + SCREEN_HOLD;
+    }
+
+    // Шаг 3. Курсор листает вкладки кандидата (данные → документы → фото и видео) и нажимает «Одобрить»
+    function review(screen, animate) {
+      const p = pointer(screen);
+      const tabsEls = [...screen.querySelectorAll('[data-fs-tab]')];
+      const panels = [...screen.querySelectorAll('[data-fs-panel]')];
+      const status = screen.querySelector('[data-fs-status]');
+      const approve = screen.querySelector('[data-fs-approve]');
+      const history = screen.querySelector('[data-fs-history]');
+      const open = key => {
+        tabsEls.forEach(tab => tab.classList.toggle('is-active', tab.dataset.fsTab === key));
+        panels.forEach(panel => { panel.hidden = panel.dataset.fsPanel !== key; });
+      };
+      const approved = () => {
+        setChip(status, 'is-ok', 'Одобрен');
+        const li = document.createElement('li');
+        li.dataset.fsAdded = '';
+        li.innerHTML = '<span class="fs-chip is-ok">Одобрен</span><time>01.10.2026, 10:15</time>';
+        history.prepend(li);
+      };
+      open('data');
+      if (!animate) { approved(); status.classList.remove('is-flash'); return 0; }
+
+      const tab = key => tabsEls.find(el => el.dataset.fsTab === key);
+      let t = 500;
+      later(() => p.to(tab('docs')), t);
+      t += CURSOR_MOVE + 150;
+      p.click(t, () => { open('docs'); stagger(screen.querySelector('.fs-files')); });
+      t += 1700;
+      later(() => p.to(tab('media')), t);
+      t += CURSOR_MOVE + 150;
+      p.click(t, () => { open('media'); stagger(screen.querySelector('.fs-media')); });
+      t += 1500;
+      later(() => p.to(approve), t);
+      t += CURSOR_MOVE + 150;
+      p.click(t, () => { approve.classList.add('is-pressed'); approved(); });
+      later(() => approve.classList.remove('is-pressed'), t + 200);
+      later(() => p.hide(), t + 900);
+      return t + SCREEN_HOLD;
+    }
+
+    // Шаг 4. Курсор запускает услуги («Начать» → «В работе») и завершает их («Завершить» → «Завершена»)
+    function services(screen, animate) {
+      const p = pointer(screen);
+      const rows = [...screen.querySelectorAll('.fs-svc')];
+      const counter = screen.querySelector('[data-fs-svc-count]');
+      const setCount = n => { counter.textContent = `(${n} из ${rows.length})`; };
+      const start = row => {
+        setChip(row.querySelector('[data-fs-svc-status]'), 'is-work', 'В работе');
+        const btn = row.querySelector('[data-fs-svc-btn]');
+        btn.textContent = 'Завершить';
+        btn.classList.add('is-primary');
+      };
+      const finish = (row, n) => {
+        setChip(row.querySelector('[data-fs-svc-status]'), 'is-ok', 'Завершена');
+        const btn = row.querySelector('[data-fs-svc-btn]');
+        btn.classList.remove('is-primary');
+        btn.classList.add('is-disabled');
+        setCount(n);
+      };
+      setCount(0);
+      if (!animate) {
+        rows.forEach((row, i) => { start(row); finish(row, i + 1); });
+        screen.querySelectorAll('.is-flash').forEach(el => el.classList.remove('is-flash'));
+        return 0;
+      }
+
+      let t = 300;
+      rows.forEach((row, i) => {
+        const btn = row.querySelector('[data-fs-svc-btn]');
+        later(() => reveal(screen, row), t);
+        t += 350;
+        later(() => p.to(btn), t);
+        t += CURSOR_MOVE + 150;
+        p.click(t, () => { btn.classList.add('is-pressed'); start(row); });
+        later(() => btn.classList.remove('is-pressed'), t + 180);
+        t += 900;
+        p.click(t, () => { btn.classList.add('is-pressed'); finish(row, i + 1); });
+        later(() => btn.classList.remove('is-pressed'), t + 180);
+        t += 400;
+      });
+      later(() => p.hide(), t);
+      return t + SCREEN_HOLD;
+    }
+
+    // Шаг 5. Пункты чек-листа отмечаются по очереди, в конце статус «Вышел на работу»
+    function checklist(screen, animate) {
+      const items = [...screen.querySelectorAll('.fs-check')];
+      const status = screen.querySelector('[data-fs-status]');
+      const toast = screen.querySelector('[data-fs-toast]');
+      const done = item => {
+        item.classList.add('is-done');
+        const state = item.querySelector('.fs-state');
+        state.innerHTML = item.querySelector('.fs-box').innerHTML + state.dataset.fsDone;
+      };
+      const finished = () => setChip(status, 'is-ok', 'Вышел на работу');
+      pointer(screen);
+      if (!animate) { items.forEach(done); finished(); status.classList.remove('is-flash'); return 0; }
+
+      let t = 600;
+      items.forEach(item => {
+        later(() => { reveal(screen, item); done(item); }, t);
+        t += CHECK_GAP;
+      });
+      t += 500;
+      later(() => scrollHome(screen), t);
+      t += 700;
+      later(() => { finished(); toast.hidden = false; }, t);
+      return t + SCREEN_HOLD;
+    }
+
+    const STEPS = [null, candidates, review, services, checklist];
 
     // Итоговый кадр этапа — без анимации
     function final(index) {
       stop();
       show(index);
       if (index === 0) formFinal();
-      else chatFinal(index);
+      else { resetScreen(screens[index - 1]); STEPS[index](screens[index - 1], false); }
     }
 
     // Проиграть этап; по окончании вызвать onEnd. При «уменьшении движения» — сразу итоговый кадр, без onEnd
@@ -253,7 +444,9 @@
       if (reduceMotion) { final(index); return 0; }
       stop();
       show(index);
-      const ms = index === 0 ? playForm() : playChat(index);
+      let ms;
+      if (index === 0) ms = playForm();
+      else { resetScreen(screens[index - 1]); ms = STEPS[index](screens[index - 1], true); }
       later(onEnd, ms);
       return ms;
     }

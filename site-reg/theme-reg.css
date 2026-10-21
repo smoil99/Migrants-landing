@@ -420,9 +420,8 @@ footer { color: rgba(255, 255, 255, .6); background: #181818; border-radius: 64p
   }
 }
 
-/* ——— «От заявки до выхода на работу — 5 шагов»: демо-чат (по мотивам блока на workos.com/atlas) ———
-   Вкладки-шаги сверху, окно рабочего чата снизу. Сообщения появляются по очереди (flow-demo.js),
-   тексты сообщений — в index.html, внутри .flow-scenario. */
+/* ——— «Пять этапов»: окно-демо с экранами личного кабинета (flow-demo.js) ———
+   Шаг 1 — форма заявки (.fa-*), шаги 2–5 — экраны .fs-screen (стили — в конце файла). */
 .flow-section { padding-top: 80px; }
 .flow-section .section-heading h2 { margin-bottom: 16px; }
 .flow-section .section-heading { margin-inline: auto; text-align: center; }          /* заголовок блока по центру */
@@ -500,104 +499,15 @@ footer { color: rgba(255, 255, 255, .6); background: #181818; border-radius: 64p
   box-shadow: 0 24px 60px rgba(0, 0, 0, .35);
 }
 
-.flow-body { display: grid; grid-template-columns: 250px 1fr; grid-template-rows: minmax(0, 1fr); height: 720px; } /* высота фиксирована — страница не прыгает */
+ /* высота фиксирована — страница не прыгает */
 
 /* Боковая панель */
-.flow-sidebar {
-  padding: 18px 12px;
-  overflow: hidden;
-  background: linear-gradient(180deg, var(--reg-gray-lighter), #fff);
-  border-right: 1px solid var(--reg-gray-light);
-  font-size: .9375rem;
-}
-.flow-workspace { display: flex; align-items: center; gap: 10px; padding: 0 12px 16px; border-bottom: 1px solid var(--reg-gray-light); }
-.flow-workspace b { flex: 1; font-size: 1.05rem; font-weight: 500; }
-.flow-workspace svg { color: var(--reg-gray-dark); }
-.flow-sidebar ul { margin: 0; padding: 0; list-style: none; }
-.flow-nav { padding: 12px 0; }
-.flow-sidebar li { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 10px; color: var(--reg-black); }
-.flow-sidebar li > span[aria-hidden] { color: var(--reg-gray-dark); }
-.flow-group { margin: 10px 12px 4px; color: var(--reg-gray-dark); font-size: .8125rem; line-height: 1.4; }
-.flow-channels li { transition: background .25s; }
-.flow-channels li.is-active { background: #fff; font-weight: 500; box-shadow: 0 1px 4px rgba(25, 27, 30, .08); }
-.flow-channels li.is-locked svg { color: var(--reg-gray-dark); }
-.flow-dms .flow-avatar { width: 24px; height: 24px; border-radius: 7px; font-size: .8rem; }
 
 /* Канал */
-.flow-main { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
-.flow-channel-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 28px;
-  border-bottom: 1px solid var(--reg-gray-light);
-}
-.flow-channel-head b { font-size: 1.25rem; font-weight: 500; letter-spacing: -.02em; }
-.flow-members {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 10px;
-  color: var(--reg-gray-dark);
-  border: 1px solid var(--reg-gray-light);
-  border-radius: 8px;
-  font-size: .875rem;
-}
-.flow-messages { flex: 1; padding: 20px 28px 8px; overflow: hidden; }
 
 /* Сообщения */
-.flow-msg {
-  display: flex;
-  gap: 14px;
-  margin-bottom: 18px;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: opacity .35s, transform .35s;
-}
-.flow-msg.is-shown { opacity: 1; transform: none; }
-.flow-msg > div { min-width: 0; }
-.flow-avatar {
-  display: grid;
-  flex-shrink: 0;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 11px;
-  font-size: .875rem;
-  font-weight: 500;
-}
-.flow-avatar.is-olga { color: #8a3b2e; background: #ffe2d6; }
-.flow-avatar.is-igor { color: #1f4d8a; background: #dbe9ff; }
-.flow-avatar.is-service { color: var(--reg-accent); background: var(--reg-black-dark); font-size: 1.15rem; font-weight: 600; }
-.flow-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; margin: 0 0 3px; line-height: 1.3; }
-.flow-meta b { font-weight: 500; }
-.flow-meta time { color: var(--reg-gray-dark); font-size: .8125rem; }
-.flow-role { color: var(--reg-gray-dark); font-size: .8125rem; }
-.flow-badge {
-  padding: 1px 6px;
-  color: var(--reg-black);
-  background: var(--reg-accent-lighter);
-  border-radius: 5px;
-  font-size: .6875rem;
-  letter-spacing: .02em;
-  text-transform: uppercase;
-}
-.flow-text { margin: 0; font-size: 1rem; line-height: 1.5; }
-.flow-text b { font-weight: 500; }
-.flow-mention { padding: 0 3px; color: var(--reg-black); background: var(--reg-accent-light); border-radius: 4px; }
 
 /* «Думает»: вместо текста — статус с бегущим бликом */
-.flow-status { display: none; margin: 0; color: var(--reg-gray-dark); }
-.flow-msg.is-thinking .flow-text { display: none; }
-.flow-msg.is-thinking .flow-status {
-  display: block;
-  background: linear-gradient(90deg, var(--reg-gray-dark) 0%, var(--reg-gray-dark) 40%, #c9ced6 50%, var(--reg-gray-dark) 60%, var(--reg-gray-dark) 100%) 0 0 / 300% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: flow-shimmer 1.4s linear infinite;
-}
-@keyframes flow-shimmer { from { background-position: 100% 0; } to { background-position: 0 0; } }
 
 /* Шаг 1 — экран формы заявки (по мотивам прототипа личного кабинета): тёмная тема, поля с подписью внутри,
    варианты ответа «таблетками». Анимация заполнения, прокрутки и отправки — в flow-demo.js */
@@ -747,15 +657,8 @@ footer { color: rgba(255, 255, 255, .6); background: #181818; border-radius: 64p
 .fa-cursor.is-click svg { transform: scale(.82); }
 
 /* Поле ввода (декоративное) */
-.flow-composer { margin: 0 24px 22px; border: 1px solid var(--reg-gray-light); border-radius: 14px; }
-.flow-composer svg { color: var(--reg-gray-dark); }
-.flow-composer-tools { display: flex; gap: 14px; padding: 10px 14px; background: var(--reg-gray-lightest); border-bottom: 1px solid var(--reg-gray-light); border-radius: 14px 14px 0 0; }
-.flow-composer-input { margin: 0; padding: 14px 16px 6px; color: var(--reg-gray-dark); }
-.flow-composer-actions { display: flex; align-items: center; gap: 14px; padding: 8px 14px 12px; }
-.flow-send { margin-left: auto; }
 
 @media (prefers-reduced-motion: reduce) {
-  .flow-msg { transition: none; }
   .flow-tabs button.is-playing .flow-tab-icon { animation: none; }
 }
 
@@ -765,18 +668,16 @@ footer { color: rgba(255, 255, 255, .6); background: #181818; border-radius: 64p
   .flow-tabs button { flex: 0 0 auto; }
 }
 @media (width <= 850px) {
-  .flow-body { grid-template-columns: 1fr; height: 760px; }
   .flow-app { height: 760px; }
-  .flow-sidebar { display: none; }
 }
 @media (width <= 580px) {
   .flow-demo { margin-top: 28px; padding: 12px; border-radius: var(--reg-r-l); }
   .flow-tabs { margin-bottom: 12px; }
   .flow-tabs button { min-height: 44px; padding: 8px 14px; font-size: .8125rem; }
   .flow-window { border-radius: 18px; }
-  .flow-body { height: 800px; }
+
   .flow-app { height: 800px; }
-  .flow-composer-tools { display: none; }
+
   .fa-scroll { padding: 0 14px 32px; }
   .fa-top { margin: 0 -14px; padding: 12px 14px 14px; }
   .fa-crumbs { gap: 12px; }
@@ -785,13 +686,6 @@ footer { color: rgba(255, 255, 255, .6); background: #181818; border-radius: 64p
   .fa-chips span { font-size: .8125rem; }
   .fa-sent { padding: 20px; }
   .fa-sent-actions span { flex: 1; text-align: center; }
-  .flow-channel-head { padding: 12px 16px; }
-  .flow-messages { padding: 16px 16px 4px; }
-  .flow-msg { gap: 10px; margin-bottom: 14px; }
-  .flow-avatar { width: 34px; height: 34px; border-radius: 9px; }
-  .flow-text { font-size: .9375rem; }
-  .flow-composer { margin: 0 12px 12px; }
-  .flow-composer-tools { gap: 10px; }
 }
 
 /* ——— Первый экран с видео (по мотивам nollahealth.com) ———
@@ -1110,8 +1004,6 @@ footer { color: rgba(255, 255, 255, .6); background: #181818; border-radius: 64p
   .fit-grid { grid-template-columns: repeat(2, 1fr); }
   .fit-card.is-stat { grid-column: 1 / -1; }
 }
-@media (width <= 850px) {
-}
 @media (width <= 580px) {
   .fit-grid { grid-template-columns: 1fr; }
   .fit-block { padding: 0 0 48px; }
@@ -1275,7 +1167,7 @@ footer { color: rgba(255, 255, 255, .6); background: #181818; border-radius: 64p
 }
 
 /* Демо «5 шагов»: внутренняя прокрутка только программная — колесо мыши и свайп прокручивают страницу */
-.fa-scroll, .flow-messages { overflow: hidden; overscroll-behavior: auto; }
+.fa-scroll { overflow: hidden; overscroll-behavior: auto; }
 
 /* «Люди и навыки под задачи предприятия» — в стиле блока «5 шагов»: тёмный фон с зелёным градиентом,
    светлые шрифты, пункты — тёмное стекло */
@@ -1466,10 +1358,7 @@ footer { color: rgba(255, 255, 255, .6); background: #181818; border-radius: 64p
     background: var(--reg-black-dark) url(services-bg.webp) center 70% / cover no-repeat;
   }
   .flow-slide .flow-window { border-radius: 16px; }
-  .flow-slide .flow-body,
   .flow-slide .flow-app { height: 560px; }
-  .flow-slide .flow-body { grid-template-columns: 1fr; }
-  .flow-slide .flow-sidebar { display: none; }
 
   .flow-slide-text { padding: 18px 4px 0; }
   .flow-slide-num { color: var(--reg-accent); font-size: .875rem; font-weight: 500; }
@@ -1496,7 +1385,6 @@ footer { color: rgba(255, 255, 255, .6); background: #181818; border-radius: 64p
   .flow-slide { flex-basis: 88%; }
   .flow-slide-media { padding: 8px; border-radius: 20px; }
   .flow-slide .flow-window { border-radius: 14px; }
-  .flow-slide .flow-body,
   .flow-slide .flow-app { height: 500px; }
 }
 
@@ -1509,8 +1397,7 @@ footer { color: rgba(255, 255, 255, .6); background: #181818; border-radius: 64p
    (баг Chrome/Safari) — поэтому содержимое окна дополнительно режем clip-path по тому же радиусу */
 .flow-window { --flow-win-r: 28px; }
 .flow-window, .flow-slide .flow-window { border-radius: var(--flow-win-r); }   /* перебивает прежние радиусы окна в слайдере */
-.flow-window > .flow-app,
-.flow-window > .flow-body { clip-path: inset(0 round var(--flow-win-r)); }
+.flow-window > .flow-app { clip-path: inset(0 round var(--flow-win-r)); }
 
 /* Карточки слайдера «5 шагов»: полупрозрачная рамка-подложка вокруг превью, как у GitHub —
    окно стоит в «стекле» на градиенте и уходит под нижний край карточки (снизу без скруглений) */
@@ -1674,7 +1561,6 @@ main { overflow-x: clip; }              /* лента слайдера выхо�
 .methods-section h2 { color: #fff; }
 .methods-section .section-heading > p:last-child:not(.eyebrow) { color: rgba(255, 255, 255, .72); }
 
-
 .methods-slides {
   display: flex;
   align-items: stretch;                                 /* карточки одной высоты */
@@ -1752,3 +1638,329 @@ main { overflow-x: clip; }              /* лента слайдера выхо�
 .replacement-section { margin-bottom: 124px; }
 @media (width <= 850px) { .methods-cta-wrap { margin-top: 70px; } .replacement-section { margin-bottom: 94px; } }
 @media (width <= 580px) { .methods-cta-wrap { margin-top: 58px; } .replacement-section { margin-bottom: 82px; } }
+
+/* «5 шагов», шаг 1: загрузка файла перетаскиванием (flow-demo.js).
+   Клик по «Загрузить файл» открывает зону загрузки; курсор уходит за край окна, возвращается с файлом
+   (.fa-cursor.has-file) и бросает его в зону (.fa-drop.is-over → .has-file); пока файл распознаётся,
+   поля формы — скелетон (.flow-app.is-parsing), затем заполняются по очереди */
+.fa-modes span { transition: color .2s, border-color .2s, background .2s; }
+.fa-modes span.is-active { color: #fff; border-color: rgba(255, 255, 255, .55); }
+.fa-drop {
+  padding: 18px;
+  background: rgba(255, 255, 255, .02);
+  border: 1.5px dashed rgba(255, 255, 255, .2);
+  border-radius: 14px;
+  transition: border-color .2s, background .2s;
+  animation: fa-fade .3s ease-out;
+}
+.fa-drop.is-over { background: rgba(17, 213, 203, .08); border-color: var(--reg-accent); }
+.fa-drop-empty { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 0; text-align: center; }
+.fa-drop-empty svg { margin-bottom: 6px; color: var(--reg-accent); }
+.fa-drop-empty b { font-size: .9375rem; font-weight: 500; }
+.fa-drop-empty span { color: rgba(255, 255, 255, .5); font-size: .75rem; }
+.fa-drop .fa-brief { display: none; position: relative; padding: 0 0 10px; background: none; border: 0; }
+.fa-drop.has-file { padding: 14px; border-style: solid; border-color: rgba(255, 255, 255, .12); }
+.fa-drop.has-file .fa-drop-empty { display: none; }
+.fa-drop.has-file .fa-brief { display: flex; }
+.fa-progress { position: absolute; inset: auto 0 0; height: 3px; overflow: hidden; background: rgba(255, 255, 255, .1); border-radius: 3px; }
+.fa-progress::after { content: ""; position: absolute; inset: 0; width: 0; background: var(--reg-accent); border-radius: inherit; }
+.flow-app.is-parsing .fa-progress::after { animation: fa-progress var(--fa-parse, 5s) linear forwards; }
+.fa-brief.is-done .fa-progress::after { width: 100%; animation: none; }
+@keyframes fa-progress { to { width: 100%; } }
+
+/* Файл, который курсор «несёт» в зону загрузки */
+.fa-cursor-file {
+  position: absolute;
+  top: 18px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  color: #fff;
+  white-space: nowrap;
+  background: rgba(40, 46, 50, .92);
+  border: 1px solid rgba(255, 255, 255, .2);
+  border-radius: 10px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .4);
+  font-size: .75rem;
+  font-weight: 500;
+  opacity: 0;
+  scale: .8;
+  transition: opacity .2s, scale .2s;
+}
+.fa-cursor-file svg { color: var(--reg-accent); }
+.fa-cursor.has-file .fa-cursor-file { opacity: 1; scale: 1; rotate: -4deg; }
+
+/* Скелетон полей, пока файл распознаётся */
+.flow-app.is-parsing .fa-field:not(.is-filled) .fa-box > *,
+.flow-app.is-parsing .fa-field:not(.is-filled) .fa-hint { visibility: hidden; }
+.flow-app.is-parsing .fa-field:not(.is-filled) .fa-box::after,
+.flow-app.is-parsing .fa-field:not(.is-filled) .fa-q,
+.flow-app.is-parsing .fa-field:not(.is-filled) .fa-chips span {
+  color: transparent;
+  background: linear-gradient(90deg, rgba(255, 255, 255, .06) 25%, rgba(255, 255, 255, .17) 50%, rgba(255, 255, 255, .06) 75%) 0 0 / 200% 100%;
+  animation: fa-shimmer 1.3s linear infinite;
+}
+.flow-app.is-parsing .fa-field:not(.is-filled) .fa-box::after { content: ""; position: absolute; inset: 15px 45% 15px 14px; border-radius: 6px; }
+.flow-app.is-parsing .fa-field:not(.is-filled) .fa-q { width: fit-content; border-radius: 6px; }
+@keyframes fa-shimmer { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+
+/* Распознанное значение появляется плавно, без «печати» */
+.fa-field.is-revealed .fa-value { animation: fa-fade .35s ease-out; }
+.fa-field.is-revealed .fa-value::after { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .flow-app.is-parsing .fa-field:not(.is-filled) .fa-box::after,
+  .flow-app.is-parsing .fa-field:not(.is-filled) .fa-q,
+  .flow-app.is-parsing .fa-field:not(.is-filled) .fa-chips span { animation: none; }
+}
+
+/* Кнопки акцентного цвета — белый текст и иконки: «Получить КП» в шапке и на первом экране,
+   в анимации «5 шагов» — «Отправить заявку» и «К списку заявок» */
+.site-header .header-cta,
+.site-header.is-dark .header-cta,
+.hero .hero-cta,
+.fa-submit,
+.fa-sent-actions .is-primary { color: #fff; }
+
+/* Активные чипсы в анимации «5 шагов» — белый текст, как на акцентных кнопках */
+.fa-chips span.is-selected { color: #fff; }
+
+/* Кнопки — начертание Medium (500): кнопки сайта (.button — шапка, первый экран, «Оставить потребность»,
+   окно заявки) и кнопки в анимации «5 шагов» */
+.button,
+.fa-submit,
+.fa-sent-actions span { font-weight: 500; }
+
+/* ——— «5 шагов», шаги 2–5: экраны личного кабинета по макетам Figma (Migrants) ———
+   Тёмная тема и шапка — как у формы шага 1 (.flow-app, .fa-top). Раскладка подстраивается под ширину окна
+   через container queries: широкое окно (десктоп) — таблицы и колонки, узкое (карточки слайдера) — списки. */
+.flow-window { container: flow-window / inline-size; }
+.fs-screen { font-size: .875rem; }
+.fs-screen .fa-scroll { padding-bottom: 28px; }
+.fs-screen .fa-top { position: static; padding-bottom: 0; background: none; -webkit-backdrop-filter: none; backdrop-filter: none; }  /* шапка не липнет — на узком окне иначе закрывает список */
+
+/* Статусы-«таблетки» с цветной точкой */
+.fs-chip {
+  --dot: rgba(255, 255, 255, .6);
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 6px;
+  align-self: center;
+  padding: 4px 10px;
+  color: #fff;
+  white-space: nowrap;
+  background: rgba(255, 255, 255, .1);
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 999px;
+  font-size: .75rem;
+  font-weight: 500;
+  transition: background .3s;
+}
+.fs-chip::before { content: ""; width: 6px; height: 6px; background: var(--dot); border-radius: 50%; transition: background .3s; }
+.fs-chip.is-work, .fs-chip.is-review { --dot: var(--reg-accent); }
+.fs-chip.is-wait { --dot: #f5c518; }
+.fs-chip.is-ok { --dot: #2bd67b; }
+.fs-chip.is-no { --dot: #ff6b6b; }
+.fs-chip.is-draft { --dot: #fff; }
+.fs-chip.is-idle { --dot: rgba(255, 255, 255, .35); color: rgba(255, 255, 255, .55); }
+.fs-chip.is-flash { animation: fs-flash .6s ease-out; }
+@keyframes fs-flash { 0% { box-shadow: 0 0 0 0 rgba(17, 213, 203, .6); } 100% { box-shadow: 0 0 0 10px rgba(17, 213, 203, 0); } }
+
+.fs-meta { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 8px 0 0; color: rgba(255, 255, 255, .6); font-size: .8125rem; }
+.fs-tabs { display: flex; gap: 22px; margin: 16px -28px 0; padding: 0 28px; overflow: hidden; border-bottom: 1px solid rgba(255, 255, 255, .08); white-space: nowrap; }
+.fs-tabs span { padding: 10px 0 12px; color: rgba(255, 255, 255, .6); border-bottom: 2px solid transparent; transition: color .2s, border-color .2s; }
+.fs-tabs span.is-active { color: #fff; border-color: #fff; }
+
+/* Кнопки */
+.fs-btn {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 16px;
+  color: #fff;
+  white-space: nowrap;
+  background: rgba(255, 255, 255, .1);
+  border: 1px solid rgba(255, 255, 255, .16);
+  border-radius: 999px;
+  font-weight: 500;
+  transition: transform .15s, filter .15s, background .25s, opacity .25s;
+}
+.fs-btn.is-primary { background: var(--reg-accent); border-color: transparent; }
+.fs-btn.is-sm { padding: 6px 14px; font-size: .8125rem; }
+.fs-btn.is-pressed { transform: scale(.95); filter: brightness(.85); }
+.fs-btn.is-disabled { opacity: .35; }
+
+/* Аватар с инициалами */
+.fs-ava {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  color: #fff;
+  background: linear-gradient(140deg, rgba(17, 213, 203, .35), rgba(255, 255, 255, .08));
+  border: 1px solid rgba(255, 255, 255, .16);
+  border-radius: 50%;
+  font-size: .75rem;
+  font-weight: 500;
+}
+.fs-ava.is-lg { width: 52px; height: 52px; font-size: 1rem; }
+
+/* Шаг 2: список кандидатов */
+.fs-filters { display: flex; flex-wrap: wrap; gap: 6px; margin: 16px 0 6px; }
+.fs-filters span { padding: 6px 12px; color: rgba(255, 255, 255, .7); border-radius: 999px; font-size: .8125rem; }
+.fs-filters span.is-active { color: #fff; background: rgba(255, 255, 255, .1); }
+.fs-filters b { color: rgba(255, 255, 255, .45); font-weight: 400; font-variant-numeric: tabular-nums; }
+.fs-list { margin: 0; padding: 0; list-style: none; }
+.fs-row {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, .08);
+  transition: opacity .35s, transform .35s, background .2s;
+}
+.fs-who { min-width: 0; }
+.fs-who b { display: block; font-weight: 500; }
+.fs-who span { display: block; overflow: hidden; color: rgba(255, 255, 255, .5); font-size: .75rem; text-overflow: ellipsis; white-space: nowrap; }
+.fs-progress { position: relative; display: flex; grid-column: 2 / -1; justify-content: space-between; padding-bottom: 8px; color: rgba(255, 255, 255, .55); font-size: .75rem; }
+.fs-progress b { color: #fff; font-weight: 500; }
+.fs-progress i { position: absolute; inset: auto 0 0; height: 4px; background: rgba(255, 255, 255, .1); border-radius: 4px; }
+.fs-progress i::after { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--p); background: var(--reg-accent); border-radius: inherit; transition: width .8s cubic-bezier(.4, 0, .2, 1); }
+.fs-go { display: none; place-items: center; width: 32px; height: 32px; background: rgba(255, 255, 255, .1); border-radius: 50%; transition: background .2s, color .2s; }
+.fs-row.is-pressed { background: rgba(255, 255, 255, .05); }
+.fs-row.is-pressed .fs-go { color: var(--reg-black); background: #fff; }
+/* Анимация появления строк */
+.fs-list.is-filling .fs-row:not(.is-in) { opacity: 0; transform: translateY(10px); }
+.fs-list.is-filling .fs-row:not(.is-in) .fs-progress i::after { width: 0; }
+
+/* Шаги 3–5: шапка кандидата */
+.fs-person { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 14px; margin-top: 4px; }
+.fs-person-text { flex: 1; min-width: 0; }
+.fs-name { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.fs-name h3 { margin: 0; font-size: 1.375rem; font-weight: 500; letter-spacing: -.02em; }
+.fs-person .fa-sub { margin-top: 4px; }
+.fs-actions { display: flex; gap: 8px; }
+
+/* Шаг 3: карточки с данными, документами, фото */
+.fs-cols { display: grid; gap: 14px; margin-top: 16px; }
+.fs-card { padding: 18px; background: rgba(255, 255, 255, .04); border: 1px solid rgba(255, 255, 255, .08); border-radius: 18px; animation: fa-fade .3s ease-out; }
+.fs-card h4 { margin: 0 0 12px; font-size: 1rem; font-weight: 500; }
+.fs-card h4 span { color: rgba(255, 255, 255, .45); font-weight: 400; }
+.fs-dl { display: grid; gap: 10px; margin: 0 0 18px; }
+.fs-dl:last-child { margin-bottom: 0; }
+.fs-dl div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 12px; }
+.fs-dl dt { color: rgba(255, 255, 255, .5); }
+.fs-dl dd { margin: 0; }
+.fs-files { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.fs-file { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid rgba(255, 255, 255, .1); border-radius: 12px; transition: opacity .3s, transform .3s; }
+.fs-file > svg { flex-shrink: 0; color: rgba(255, 255, 255, .6); }
+.fs-file div { flex: 1; min-width: 0; }
+.fs-file b { display: block; font-weight: 500; }
+.fs-file span { display: block; overflow: hidden; color: rgba(255, 255, 255, .5); font-size: .75rem; text-overflow: ellipsis; white-space: nowrap; }
+.fs-icon-btn { color: rgba(255, 255, 255, .6); }
+.fs-media { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fs-media figure { position: relative; margin: 0; transition: opacity .3s, transform .3s; }
+.fs-media img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; }
+.fs-media .is-video img { filter: brightness(.65) saturate(1.2); object-position: 70% 50%; }
+.fs-media figcaption { margin-top: 6px; color: rgba(255, 255, 255, .5); font-size: .75rem; }
+.fs-play { position: absolute; top: calc(50% - 30px); left: calc(50% - 22px); display: grid; place-items: center; width: 44px; height: 44px; background: rgba(0, 0, 0, .45); border-radius: 50%; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.fs-time { position: absolute; bottom: 30px; left: 8px; padding: 2px 6px; background: rgba(0, 0, 0, .55); border-radius: 6px; font-size: .6875rem; }
+.fs-reveal > * { opacity: 0; transform: translateY(8px); }
+.fs-reveal > .is-in { opacity: 1; transform: none; }
+.fs-history { display: none; }
+.fs-history ul { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.fs-history li { display: flex; align-items: center; justify-content: space-between; gap: 10px; animation: fa-fade .4s ease-out; }
+.fs-history time { color: rgba(255, 255, 255, .6); font-size: .75rem; white-space: nowrap; }
+
+/* Шаг 4: услуги */
+.fs-heading { margin: 18px 0 12px; font-size: 1.125rem; font-weight: 500; }
+.fs-heading span { color: rgba(255, 255, 255, .45); font-weight: 400; }
+.fs-group { margin-bottom: 10px; background: rgba(255, 255, 255, .04); border: 1px solid rgba(255, 255, 255, .08); border-radius: 16px; }
+.fs-group-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 16px; }
+.fs-group-head b { font-weight: 500; }
+.fs-group-head b span { color: rgba(255, 255, 255, .45); font-weight: 400; }
+.fs-group-head svg { flex-shrink: 0; color: rgba(255, 255, 255, .6); }
+.fs-group.is-open .fs-group-head svg { transform: rotate(180deg); }
+.fs-svcs { margin: 0; padding: 0 16px 6px; list-style: none; }
+.fs-svc { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px 12px; padding: 12px 0; border-top: 1px solid rgba(255, 255, 255, .08); }
+.fs-svc-name { grid-column: 1 / -1; }
+.fs-svc-name b { display: block; font-weight: 500; }
+.fs-svc-name span { color: rgba(255, 255, 255, .5); font-size: .75rem; }
+.fs-svc .fs-chip { justify-self: start; }
+
+/* Шаг 5: чек-лист */
+.fs-checklist { display: grid; gap: 8px; margin: 16px 0 0; padding: 0; list-style: none; }
+.fs-check { display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: rgba(255, 255, 255, .03); border: 1px solid rgba(255, 255, 255, .08); border-radius: 12px; transition: background .3s; }
+.fs-box { display: grid; flex-shrink: 0; place-items: center; width: 18px; height: 18px; color: transparent; border: 1.5px solid rgba(255, 255, 255, .4); border-radius: 5px; transition: background .25s, border-color .25s, color .25s; }
+.fs-ico { display: none; flex-shrink: 0; place-items: center; width: 32px; height: 32px; color: rgba(255, 255, 255, .7); background: rgba(255, 255, 255, .08); border-radius: 9px; }
+.fs-check-name { flex: 1; min-width: 0; }
+.fs-check-name b { font-weight: 500; }
+.fs-check-name span { display: block; color: rgba(255, 255, 255, .5); font-size: .75rem; }
+.fs-state { display: inline-flex; flex-shrink: 0; align-items: center; gap: 6px; padding: 6px 12px; color: rgba(255, 255, 255, .85); background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .14); border-radius: 999px; font-size: .75rem; font-weight: 500; white-space: nowrap; }
+.fs-check.is-done { background: rgba(17, 213, 203, .07); }
+.fs-check.is-done .fs-box { color: #fff; background: var(--reg-accent); border-color: var(--reg-accent); }
+.fs-check.is-done .fs-state { color: var(--reg-accent); background: rgba(17, 213, 203, .12); border-color: transparent; }
+.fs-toast {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  color: #fff;
+  white-space: nowrap;
+  background: rgba(30, 36, 40, .95);
+  border: 1px solid rgba(17, 213, 203, .45);
+  border-radius: 999px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, .45);
+  font-weight: 500;
+  translate: -50% 0;
+  animation: fs-toast .4s ease-out;
+}
+.fs-toast svg { color: var(--reg-accent); }
+@keyframes fs-toast { from { opacity: 0; translate: -50% 12px; } }
+
+/* Широкое окно (десктоп): таблица кандидатов, колонки, иконки в чек-листе */
+@container flow-window (width > 640px) {
+  .fs-row { grid-template-columns: 36px minmax(0, 1.4fr) 130px minmax(140px, 1fr) 32px; padding: 10px 0; }
+  .fs-row .fs-chip { justify-self: start; }
+  .fs-progress { grid-column: auto; }
+  .fs-go { display: grid; }
+  .fs-cols { grid-template-columns: minmax(0, 1.7fr) minmax(220px, 1fr); align-items: start; }
+  .fs-history { display: block; }
+  .fs-svc { grid-template-columns: minmax(0, 1fr) 110px auto; }
+  .fs-svc-name { grid-column: auto; }
+  .fs-ico { display: grid; }
+  .fs-media img { aspect-ratio: 16 / 10; }
+}
+@container flow-window (width <= 420px) {
+  .fs-screen .fa-scroll { padding-inline: 14px; }
+  .fs-screen .fs-tabs { margin-inline: -14px; padding-inline: 14px; gap: 16px; }
+  .fs-name h3 { font-size: 1.125rem; }
+  .fs-ava.is-lg { width: 44px; height: 44px; }
+  .fs-actions { width: 100%; }
+  .fs-actions .fs-btn { flex: 1; }
+  .fs-dl div { grid-template-columns: 1fr; gap: 2px; }
+  .fs-toast { font-size: .8125rem; }
+  /* компактная шапка, чтобы на карточке слайдера оставалось место для списка */
+  .fs-screen .fa-back { display: none; }
+  .fs-screen .fa-title h3 { font-size: 1.0625rem; }
+  .fs-meta { margin-top: 4px; font-size: .75rem; }
+  .fs-tabs { margin-top: 10px; font-size: .8125rem; }
+  .fs-tabs span { padding: 8px 0 10px; }
+  .fs-filters { flex-wrap: nowrap; margin-top: 10px; overflow: hidden; }
+  .fs-filters span { padding: 5px 10px; font-size: .75rem; white-space: nowrap; }
+  .fs-row { padding: 10px 0; }
+  .fs-person { gap: 10px 12px; }
+  .fs-person .fa-sub { font-size: .75rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fs-row, .fs-file, .fs-media figure, .fs-card, .fs-history li, .fs-toast { transition: none; animation: none; }
+}
