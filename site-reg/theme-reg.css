@@ -1964,3 +1964,23 @@ main { overflow-x: clip; }              /* лента слайдера выхо�
 @media (prefers-reduced-motion: reduce) {
   .fs-row, .fs-file, .fs-media figure, .fs-card, .fs-history li, .fs-toast { transition: none; animation: none; }
 }
+
+/* «5 шагов»: в начале каждого шага элементы экрана появляются по очереди снизу вверх (flow-demo.js, intro):
+   .fs-io — плавный переход на время появления, .fs-pre — исходное (скрытое) состояние */
+.fs-io { transition: opacity .35s ease-out, transform .35s ease-out !important; }
+.fs-pre { opacity: 0 !important; transform: translateY(10px) !important; }
+
+/* Шаг 5 на карточке слайдера: компактный чек-лист (без подписей, состояние — только иконкой),
+   чтобы весь список и статус кандидата помещались без прокрутки */
+@container flow-window (width <= 640px) {
+  .fs-checklist { gap: 5px; margin-top: 12px; }
+  .fs-check { padding: 8px 12px; }
+  .fs-screen .fa-scroll { padding-bottom: 14px; }
+  .fs-check-name span { display: none; }
+  .fs-state { gap: 0; padding: 6px; font-size: 0; }
+}
+
+/* Окно в карточке слайдера на телефоне — 560px, как на планшете: чек-лист шага 5 помещается целиком */
+@media (width <= 580px) {
+  .flow-slide .flow-app { height: 560px; }
+}

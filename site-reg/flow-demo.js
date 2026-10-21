@@ -20,9 +20,10 @@
   const REVEAL_GAP = 150;       // минимальный промежуток между появлением значений в соседних полях
   const SKELETON = 1400;        // все поля — скелетон, прежде чем начнут появляться значения
   const CURSOR_MOVE = 800;      // одно перемещение курсора (совпадает с transition у .fa-cursor)
-  const SENT_HOLD = 3800;       // сколько показывается окно «Готово» перед следующим шагом
+  const SENT_HOLD = 1500;       // сколько показывается окно «Готово» перед следующим шагом
+  const INTRO_GAP = 70;         // все шаги: между появлением элементов экрана в начале показа
   const ROW_GAP = 320;          // шаг 2: между появлением строк кандидатов
-  const CHECK_GAP = 420;        // шаг 5: между отметками пунктов чек-листа
+  const CHECK_GAP = 280;        // шаг 5: между отметками пунктов чек-листа
   const SCREEN_HOLD = 3000;     // шаги 2–5: пауза на итоговом кадре перед следующим шагом
 
   const tabs = [...root.querySelectorAll('[data-flow-tab]')];
@@ -66,6 +67,18 @@
       path = null;
     };
 
+    // Элементы экрана появляются по очереди снизу вверх (как строки в списке кандидатов).
+    // Возвращает момент, когда появился последний элемент
+    function intro(scope, selector, at = 0) {
+      const items = [...scope.querySelectorAll(selector)].filter(el => el.offsetParent !== null);
+      items.forEach(el => el.classList.add('fs-io', 'fs-pre'));
+      items.forEach((el, i) => later(() => el.classList.remove('fs-pre'), at + 60 + i * INTRO_GAP));
+      const end = at + 60 + items.length * INTRO_GAP;
+      later(() => items.forEach(el => el.classList.remove('fs-io')), end + 450);
+      return end;
+    }
+    const clearIntro = scope => scope.querySelectorAll('.fs-pre, .fs-io').forEach(el => el.classList.remove('fs-pre', 'fs-io'));
+
     function show(index) {
       app.hidden = index !== 0;
       screens.forEach((screen, i) => { screen.hidden = i + 1 !== index; });
@@ -74,6 +87,7 @@
     /* Шаг 1: форма */
     function resetForm() {
       scroller.scrollTop = 0;
+      clearIntro(app);
       app.classList.remove('is-parsing');
       upload.classList.add('is-active');                 // режим «Загрузить файл» выбран сразу
       drop.hidden = false;
@@ -167,14 +181,17 @@
     function playForm() {
       resetForm();
 
+      // 0. Элементы формы появляются по очереди
+      const o = intro(app, '.fa-crumbs, .fa-title, .fa-sub, .fa-card, .fa-modes, .fa-drop, .fa-section, .fa-submit');
+
       // 1. Курсор с файлом заходит из-за правого края окна и тащит файл в зону загрузки
       later(() => {
         const a = app.getBoundingClientRect();
         const b = drop.getBoundingClientRect();
         cursor.style.transform = `translate(${app.offsetWidth + 40}px, ${(b.top - a.top) / zoom() + 20}px)`;
         cursor.classList.add('is-visible', 'has-file');
-      }, 100);
-      const back = 300;
+      }, o + 100);
+      const back = o + 300;
       later(() => { cursor.style.transition = ''; cursorTo(drop, 0.45, 0.5); }, back);
       later(() => drop.classList.add('is-over'), back + CURSOR_MOVE * 0.6);
 
@@ -244,6 +261,11 @@
       screen.querySelectorAll('.is-in, .is-pressed, .is-done').forEach(el => el.classList.remove('is-in', 'is-pressed', 'is-done'));
       screen.querySelectorAll('.fs-reveal, .is-filling').forEach(el => el.classList.remove('fs-reveal', 'is-filling'));
       screen.querySelectorAll('[data-fs-added]').forEach(el => el.remove());
+      clearIntro(screen);
+      screen.querySelectorAll('[data-fs-tabs] [data-fs-tab]').forEach((tab, i) => tab.classList.toggle('is-active', i === 0));
+      screen.querySelectorAll('[data-fs-panel]').forEach((panel, i) => { panel.hidden = i > 0; });
+      screen.querySelectorAll('.fs-actions').forEach(el => { el.hidden = false; });
+      screen.querySelector('.fa-cursor').classList.remove('is-visible', 'is-click');
       const toast = screen.querySelector('[data-fs-toast]');
       if (toast) toast.hidden = true;
     }
@@ -285,6 +307,13 @@
       [...box.children].forEach((child, i) => later(() => child.classList.add('is-in'), 80 + 120 * i));
     }
 
+    const INTRO = {
+      head: '.fa-crumbs, .fa-title, .fs-person, .fs-meta, .fs-tabs',
+      review: '.fs-card:not([hidden]), .fs-card:not([hidden]) h4, .fs-card:not([hidden]) .fs-dl > div, .fs-history, .fs-history li',
+      services: '.fs-heading, .fs-group, .fs-svc',
+      checklist: '.fs-check',
+    };
+
     // Шаг 2. Список кандидатов заполняется, счётчик растёт, курсор открывает первого кандидата
     function candidates(screen, animate) {
       const p = pointer(screen);
@@ -297,7 +326,7 @@
 
       list.classList.add('is-filling');
       count.textContent = '0';
-      let t = 400;
+      let t = intro(screen, `${INTRO.head}, .fs-filters`) + 100;
       rows.forEach((row, i) => {
         later(() => {
           row.classList.add('is-in');
@@ -315,18 +344,28 @@
       }, t);
       t += CURSOR_MOVE + 150;
       p.click(t, () => rows[0].classList.add('is-pressed'));
-      later(() => p.hide(), t + 900);
-      return t + SCREEN_HOLD;
+
+      // Клик по строке открывает карточку кандидата — экран шага 3 в исходном состоянии
+      t += 450;
+      later(() => {
+        const next = screens[1];
+        resetScreen(next);
+        screen.hidden = true;
+        next.hidden = false;
+        intro(next, `${INTRO.head}, ${INTRO.review}`);
+      }, t);
+      return t + 1800;
     }
 
     // Шаг 3. Курсор листает вкладки кандидата (данные → документы → фото и видео) и нажимает «Одобрить»
-    function review(screen, animate) {
+    function review(screen, animate, continued) {
       const p = pointer(screen);
       const tabsEls = [...screen.querySelectorAll('[data-fs-tab]')];
       const panels = [...screen.querySelectorAll('[data-fs-panel]')];
       const status = screen.querySelector('[data-fs-status]');
       const approve = screen.querySelector('[data-fs-approve]');
       const history = screen.querySelector('[data-fs-history]');
+      const actions = screen.querySelector('.fs-actions');
       const open = key => {
         tabsEls.forEach(tab => tab.classList.toggle('is-active', tab.dataset.fsTab === key));
         panels.forEach(panel => { panel.hidden = panel.dataset.fsPanel !== key; });
@@ -339,10 +378,11 @@
         history.prepend(li);
       };
       open('data');
-      if (!animate) { approved(); status.classList.remove('is-flash'); return 0; }
+      if (!animate) { approved(); actions.hidden = true; status.classList.remove('is-flash'); return 0; }
 
       const tab = key => tabsEls.find(el => el.dataset.fsTab === key);
-      let t = 500;
+      // Карточка уже открыта кликом на шаге 2 — повторно не проявляем
+      let t = (continued ? 0 : intro(screen, `${INTRO.head}, ${INTRO.review}`)) + 300;
       later(() => p.to(tab('docs')), t);
       t += CURSOR_MOVE + 150;
       p.click(t, () => { open('docs'); stagger(screen.querySelector('.fs-files')); });
@@ -354,8 +394,9 @@
       later(() => p.to(approve), t);
       t += CURSOR_MOVE + 150;
       p.click(t, () => { approve.classList.add('is-pressed'); approved(); });
-      later(() => approve.classList.remove('is-pressed'), t + 200);
-      later(() => p.hide(), t + 900);
+      // После одобрения кнопки «Одобрить» и «Отклонить» скрываются
+      later(() => { approve.classList.remove('is-pressed'); actions.classList.add('fs-io', 'fs-pre'); p.hide(); }, t + 250);
+      later(() => { actions.hidden = true; actions.classList.remove('fs-io', 'fs-pre'); }, t + 600);
       return t + SCREEN_HOLD;
     }
 
@@ -385,7 +426,7 @@
         return 0;
       }
 
-      let t = 300;
+      let t = intro(screen, `${INTRO.head}, ${INTRO.services}`) + 300;
       rows.forEach((row, i) => {
         const btn = row.querySelector('[data-fs-svc-btn]');
         later(() => reveal(screen, row), t);
@@ -417,14 +458,12 @@
       pointer(screen);
       if (!animate) { items.forEach(done); finished(); status.classList.remove('is-flash'); return 0; }
 
-      let t = 600;
+      let t = intro(screen, `${INTRO.head}, ${INTRO.checklist}`) + 300;
       items.forEach(item => {
         later(() => { reveal(screen, item); done(item); }, t);
         t += CHECK_GAP;
       });
-      t += 500;
-      later(() => scrollHome(screen), t);
-      t += 700;
+      t += 300;
       later(() => { finished(); toast.hidden = false; }, t);
       return t + SCREEN_HOLD;
     }
@@ -440,13 +479,14 @@
     }
 
     // Проиграть этап; по окончании вызвать onEnd. При «уменьшении движения» — сразу итоговый кадр, без onEnd
-    function play(index, onEnd) {
+    // continued — шаг идёт сразу за предыдущим (на десктопе): шаг 3 тогда не проявляет карточку повторно
+    function play(index, onEnd, continued = false) {
       if (reduceMotion) { final(index); return 0; }
       stop();
       show(index);
       let ms;
       if (index === 0) ms = playForm();
-      else { resetScreen(screens[index - 1]); ms = STEPS[index](screens[index - 1], true); }
+      else { resetScreen(screens[index - 1]); ms = STEPS[index](screens[index - 1], true, continued); }
       later(onEnd, ms);
       return ms;
     }
@@ -503,10 +543,10 @@
     stage.setAttribute('aria-labelledby', tabs[index].id);
   }
 
-  function playTab(index) {
+  function playTab(index, continued = false) {
     selectTab(index);
     const tab = tabs[index];
-    const ms = main.play(index, () => playTab((index + 1) % tabs.length));
+    const ms = main.play(index, () => playTab((index + 1) % tabs.length, true), continued);
     if (!ms) return;
     tab.style.setProperty('--flow-dur', `${ms}ms`);
     void tab.offsetWidth;               // перезапуск анимации полосы прогресса
