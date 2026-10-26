@@ -261,7 +261,7 @@ function renderResult() {
     const q = $(`#faq-button-${i} span`)?.textContent.trim();
     if (!q) return;
     const btn = document.createElement('button');
-    btn.innerHTML = `${q} <span>↗</span>`;
+    btn.innerHTML = `${q} <span><svg class="arrow-icon" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"></path></svg></span>`;
     btn.addEventListener('click', () => {
       filterFaq('Все вопросы');
       toggleFaq(i, true);
@@ -284,18 +284,19 @@ function editIntentField(field, value) {
 
 const dialog = $('#lead-dialog');
 const leadForm = $('#lead-form');
-const FIELDS = ['contact_name', 'contact_phone', 'specialists_count', 'work_region', 'company_name', 'contact_email'];
+// Короткая заявка на консультацию (Lead): обязательны имя, компания, телефон и «кого нанять»;
+// email — по желанию, но если указан, должен быть корректным; количество и комментарий — по желанию
+const FIELDS = ['contact_name', 'company_name', 'contact_phone', 'contact_email', 'hire_who', 'specialists_count', 'comment'];
 const field = key => $(`#lead-${key}`);
 
 function validateLead() {
   const v = Object.fromEntries(FIELDS.map(k => [k, field(k).value]));
   const errors = {};
-  if (v.contact_name.trim().length < 2 || v.contact_name.length > 100) errors.contact_name = 'Укажите имя и фамилию';
+  if (v.contact_name.trim().length < 2 || v.contact_name.length > 100) errors.contact_name = 'Укажите имя';
+  if (!v.company_name.trim() || v.company_name.length > 200) errors.company_name = 'Укажите компанию';
   if (!/^[78]\d{10}$/.test(v.contact_phone.replace(/\D/g, ''))) errors.contact_phone = 'Проверьте номер телефона: +7 и 10 цифр';
-  if (!/^\d+$/.test(v.specialists_count) || !Number.isSafeInteger(Number(v.specialists_count)) || Number(v.specialists_count) <= 0) errors.specialists_count = 'Укажите целое число больше нуля';
-  if (!v.work_region.trim() || v.work_region.length > 200) errors.work_region = 'Укажите регион работы';
-  if (!v.company_name.trim() || v.company_name.length > 200) errors.company_name = 'Укажите название компании';
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.contact_email) || v.contact_email.length > 254) errors.contact_email = 'Проверьте адрес электронной почты';
+  if (v.contact_email.trim() && (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.contact_email.trim()) || v.contact_email.length > 254)) errors.contact_email = 'Проверьте адрес электронной почты';
+  if (!v.hire_who.trim() || v.hire_who.length > 200) errors.hire_who = 'Укажите, кого хотите нанять';
   if (!$('#lead-consent').checked) errors.consent = 'Подтвердите согласие';
   return { values: v, errors };
 }
@@ -321,8 +322,8 @@ function showLeadView(view) {
 
 function openLead() {
   const { intent, query, mode } = state;
+  if (intent.profession) field('hire_who').value = intent.profession;
   if (intent.count) field('specialists_count').value = intent.count;
-  if (intent.region) field('work_region').value = intent.region;
 
   const summary = $('[data-lead-view="form"] .context-summary', dialog);
   const hasContext = Boolean(query || intent.profession);
@@ -345,8 +346,8 @@ function closeLead() {
 function resetLead() {
   leadForm.reset();
   [...FIELDS, 'consent'].forEach(k => setFieldError(k, ''));
-  field('specialists_count').value = state.intent.count;
-  field('work_region').value = state.intent.region;
+  field('hire_who').value = state.intent.profession || '';
+  field('specialists_count').value = state.intent.count || '';
   showLeadView('form');
 }
 
@@ -378,8 +379,6 @@ async function submitLead(event) {
     }
   }
 
-  $('[data-success="title"]', dialog).textContent = state.intent.profession || 'Потребность требует уточнения';
-  $('[data-success="details"]', dialog).textContent = `${values.specialists_count} специалистов · ${values.work_region}`;
   showLeadView('success');
   $('#success-title').focus();
 }
@@ -400,6 +399,7 @@ document.addEventListener('click', event => {
     field('contact_phone').value = '+7 000 000-00-00';
     field('contact_email').value = 'demo@example.com';
     field('company_name').value = 'ООО Тестовый проект';
+    if (!field('hire_who').value) field('hire_who').value = 'Сварщики';
     return;
   }
   if (query) return submitQuery(query);

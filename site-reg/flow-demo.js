@@ -106,7 +106,7 @@
       cursor.style.transform = `translate(${app.clientWidth * 0.62}px, ${app.clientHeight * 0.55}px)`;
       dim.hidden = true;
       sent.hidden = true;
-      title.textContent = 'Создать заявку';
+      title.textContent = 'Новая заявка';
       statuses.forEach(s => { s.hidden = true; });
     }
 
@@ -121,7 +121,7 @@
     function showSent() {
       dim.hidden = false;
       sent.hidden = false;
-      title.textContent = 'Заявка';
+      title.textContent = 'Электросварщик ручной сварки';   // после отправки — как в прототипе: заголовок по профессии
       statuses.forEach(s => { s.hidden = false; });
     }
 

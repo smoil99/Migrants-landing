@@ -2050,3 +2050,134 @@ main { overflow-x: clip; }              /* лента слайдера выхо�
 /* Горизонтальные ленты (слайдеры) не прокручиваются по вертикали: колёсико над карточками всегда
    прокручивает страницу (overflow-x: auto иначе делает и overflow-y прокручиваемым) */
 .ex-slides, .methods-slides, .flow-slides { overflow-y: hidden; }
+
+/* Окно заявки — короткая форма на консультацию: поле «Комментарий» и широкие поля — во всю ширину сетки */
+.field.is-wide { grid-column: 1 / -1; }
+.field textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 88px;
+  padding: 12px;
+  color: var(--reg-black);
+  background: #fff;
+  border: 1px solid var(--reg-gray);
+  border-radius: var(--reg-r-s);
+  font: inherit;
+  font-size: .875rem;
+  line-height: 1.5;
+  resize: vertical;
+}
+.field textarea::placeholder { color: #768379; }
+.field textarea[aria-invalid=true] { border-color: #d58577; }
+.success h2 { font-size: 1.625rem; line-height: 1.25; }
+
+/* «Смотреть видео»: белый треугольник, по центру кружка оптически — центр масс треугольника в центре
+   (путь M8 5v14l12-7z), без сдвига отступом */
+.hero-play { padding-left: 0; color: #fff; }
+
+/* Стрелка «↗» в кнопках и ссылках — SVG-иконка (символ ↗ на iOS и части Android показывается эмодзи) */
+.arrow-icon { display: inline-block; flex-shrink: 0; vertical-align: -.125em; }
+
+/* Кнопка шапки: на узких экранах короткая подпись «Консультация», чтобы рядом поместились логотип и ☰ */
+.header-cta .cta-short { display: none; }
+@media (width <= 580px) {
+  .header-cta .cta-full { display: none; }
+  .header-cta .cta-short { display: inline; }
+}
+
+/* ——— Страница расширенной заявки brief.html (сценарий Б, тексты — из согласованного прототипа) ———
+   Светлая страница: шапка с логотипом и «На главную», разделы формы — белые карточки, ответы — «таблетки» */
+.brief-page { background: var(--reg-gray-lighter); }
+.brief-page [hidden] { display: none !important; }
+.bf-header { position: sticky; top: 0; z-index: 10; background: rgba(242, 244, 247, .85); border-bottom: 1px solid var(--reg-gray-light); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+.bf-header-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 72px; }
+.bf-back { display: inline-flex; align-items: center; gap: 6px; color: var(--reg-black); font-weight: 500; }
+.bf-main { max-width: 860px; padding: 32px 0 80px; }
+.bf-crumbs { margin: 0 0 12px; color: var(--reg-gray-dark); font-size: .875rem; }
+.bf-crumbs a { color: inherit; }
+.bf-main h1 { margin: 0 0 8px; font-size: clamp(2rem, 4vw, 2.75rem); font-weight: 500; letter-spacing: -.03em; }
+.bf-sub { margin: 0; color: var(--reg-gray-dark); font-size: 1rem; }
+.brief-page .poc-note { margin: 20px 0; }
+
+.bf-modes { display: flex; gap: 6px; margin-bottom: 12px; }
+.bf-modes button { padding: 8px 14px; color: var(--reg-gray-dark); background: none; border: 1px solid transparent; border-radius: 999px; font-weight: 500; }
+.bf-modes button[aria-selected=true] { color: var(--reg-black); background: #fff; border-color: var(--reg-gray); }
+.bf-drop { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 28px 20px; color: var(--reg-black); text-align: center; background: #fff; border: 1.5px dashed var(--reg-gray); border-radius: var(--reg-r-m); cursor: pointer; transition: border-color .2s; }
+.bf-drop:hover { border-color: var(--reg-accent); }
+.bf-drop svg { margin-bottom: 6px; color: var(--reg-accent-dark); }
+.bf-drop span { color: var(--reg-gray-dark); font-size: .8125rem; }
+.bf-drop-btn { display: contents; color: inherit; background: none; border: 0; font: inherit; }
+div.bf-drop { padding: 0; }
+div.bf-drop .bf-drop-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 100%; padding: 28px 20px; cursor: pointer; }
+
+.bf-section { margin-top: 16px; padding: 28px; background: #fff; border-radius: var(--reg-r-l); }
+.bf-section h2 { margin: 0 0 20px; font-size: 1.25rem; font-weight: 500; letter-spacing: -.02em; }
+.bf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 16px; }
+.bf-field { min-width: 0; margin: 0; padding: 0; border: 0; }
+.bf-field.is-wide { grid-column: 1 / -1; }
+.bf-field > label { display: flex; flex-direction: column; gap: 8px; }
+.bf-field select { width: 100%; height: 48px; padding: 0 12px; color: var(--reg-black); background: #fff; border: 1px solid var(--reg-gray); border-radius: var(--reg-r-s); font: inherit; font-size: .9375rem; }
+.bf-field textarea { width: 100%; min-height: 96px; padding: 12px; color: var(--reg-black); background: #fff; border: 1px solid var(--reg-gray); border-radius: var(--reg-r-s); font: inherit; font-size: .9375rem; line-height: 1.5; resize: vertical; }
+.bf-field legend { margin-bottom: 10px; padding: 0; font-size: .8125rem; font-weight: 500; }
+.bf-field legend i, .bf-field span i { color: var(--reg-accent-dark); font-style: normal; }
+.bf-hint { display: block; margin-top: 6px; color: var(--reg-gray-dark); font-size: .75rem; line-height: 1.45; }
+.bf-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.bf-chip { position: relative; cursor: pointer; }
+.bf-chip input { position: absolute; opacity: 0; pointer-events: none; }
+.bf-chip span { display: inline-block; padding: 9px 16px; color: var(--reg-black); background: var(--reg-gray-lighter); border: 1px solid transparent; border-radius: 999px; font-size: .875rem; transition: background .2s, color .2s; }
+.bf-chip:hover span { background: var(--reg-gray-light); }
+.bf-chip input:checked + span { color: #fff; background: var(--reg-accent); font-weight: 500; }
+.bf-chip input:focus-visible + span { outline: 2px solid var(--reg-accent); outline-offset: 2px; }
+.bf-age .bf-grid { gap: 16px; }
+
+.bf-field.is-invalid input, .bf-field.is-invalid select, .bf-field.is-invalid textarea { border-color: #d58577; }
+.bf-field.is-invalid .bf-chip span { box-shadow: inset 0 0 0 1px #d58577; }
+.bf-error { display: block; margin-top: 6px; color: #c0392b; font-size: .75rem; }
+.bf-error-summary { margin: 0 0 12px; color: #c0392b; font-size: .875rem; }
+.brief-page .consent { margin: 24px 0 16px; }
+.bf-submit { width: 100%; }
+
+.bf-dialog { width: min(520px, 100% - 28px); }
+.bf-dialog .success { text-align: center; }
+.bf-dialog-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 20px; }
+.bf-dialog-actions .button { min-width: 0; }
+
+@media (width <= 700px) {
+  .bf-grid { grid-template-columns: 1fr; }
+  .bf-section { padding: 22px 18px; border-radius: var(--reg-r-m); }
+  .bf-header-inner { min-height: 64px; }
+  .bf-main { padding-top: 24px; }
+}
+
+/* Второй сценарий — «Заполнить заявку на привлечение сотрудников» (brief.html): на первом экране — стеклянная
+   кнопка как «Смотреть видео», в «Не уверены в способе?» — светлая обводка под основной кнопкой */
+.cta-buttons { display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; }
+.cta-buttons .button { justify-content: center; }
+.cta-brief { color: #fff; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .3); border-radius: var(--reg-r-s); }
+.cta-brief:hover { text-decoration: none; background: rgba(255, 255, 255, .16); }
+.hero-brief:hover { text-decoration: none; }
+@media (width <= 850px) { .cta-buttons { width: 100%; } }
+/* brief.html: подписи текстовых полей — как у вопросов с вариантами (legend) */
+.bf-field > label > span { font-size: .8125rem; font-weight: 500; line-height: 1.4; }
+
+/* «Не уверены в способе?»: кнопки — отдельной строкой под текстом, в ряд и прижаты вправо
+   (основная «Получить консультацию» — крайняя справа). «Заполнить заявку» — та же «таблетка»,
+   обводка той же толщины, что луч у основной кнопки (2px) */
+.methods-cta .contact-inner { flex-direction: column; align-items: stretch; gap: 28px; }
+.methods-cta .cta-buttons { flex-direction: row-reverse; flex-wrap: wrap; justify-content: flex-start; gap: 12px; width: auto; }
+.cta-brief { border: 2px solid rgba(255, 255, 255, .35); border-radius: 999px; }
+.cta-brief:hover { border-color: rgba(255, 255, 255, .6); }
+@media (width <= 850px) {
+  .methods-cta .cta-buttons { flex-direction: column; }
+  .methods-cta .cta-buttons .button { justify-content: space-between; width: 100%; }
+}
+/* Обводка 2px: 1px рамки + 1px внутренней тенью — толщина как у луча основной кнопки, а высота кнопок совпадает;
+   на узких экранах длинная подпись переносится, а не обрезается */
+.cta-brief { border-width: 1px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .35); }
+.cta-brief:hover { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .6); }
+@media (width <= 580px) {
+  .cta-brief, .hero-brief { white-space: normal; text-align: left; line-height: 1.3; }
+}
+/* «Не уверены в способе?»: кнопки — по левому краю, первой «Получить консультацию» */
+.methods-cta .cta-buttons { flex-direction: row; justify-content: flex-start; }
+@media (width <= 850px) { .methods-cta .cta-buttons { flex-direction: column; } }
