@@ -2252,3 +2252,59 @@ div.bf-drop .bf-drop-btn { display: flex; flex-direction: column; align-items: c
 .methods-section { padding-bottom: 44px; }
 @media (width <= 850px) { .methods-section { padding-bottom: 32px; } }
 @media (width <= 580px) { .methods-section { padding-bottom: 27px; } }
+
+/* Cookie-баннер — полоса по нижнему краю во всю ширину; текст и кнопка — по ширине контента.
+   Пока баннер открыт, script.js пишет его высоту в --cookie-h, и первый экран поднимается над ним
+   с обычным нижним отступом */
+.cookie-banner { inset: auto 0 0; width: auto; max-width: none; padding: 18px max(40px, (100% - 1240px) / 2); transform: none; border: 0; border-top: 1px solid #d5e0df; border-radius: 0; box-shadow: 0 -8px 32px #14262b1f; }
+.hero .hero-grid { padding-bottom: calc(72px + var(--cookie-h, 0px)); transition: opacity .4s, visibility .4s, padding-bottom .35s ease; }
+@media (width <= 850px) {
+  .cookie-banner { padding: 16px 24px; }
+  .hero .hero-grid { padding-bottom: calc(48px + var(--cookie-h, 0px)); }
+}
+@media (width <= 700px) {
+  .cookie-banner { width: auto; bottom: 0; padding: 16px 24px; }
+}
+@media (width <= 580px) {
+  .cookie-banner { padding: 16px; }
+}
+
+/* «Отрасли и профессии»: вводный абзац — в одну строку на desktop */
+.examples-section .section-heading { max-width: none; }
+.examples-section .section-heading > p:not(.eyebrow) { max-width: 760px; }
+
+/* «Объём проекта»: группа специалистов собирается от центра в команду, когда карточка появляется на экране.
+   Фигурки без цифр — объём набора на странице не называется (US-020). Разметку строит script.js */
+.cs-team { --pitch: 42px; display: grid; gap: 4px; justify-items: start; margin: auto 0; }   /* шаг = фигурка + зазор */
+.cs-team-row { display: flex; gap: 4px; }
+.cs-team-row:nth-child(2) { margin-left: calc(var(--pitch) / 2); }   /* средний ряд — со сдвигом, «сотами» */
+.cs-person {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  color: rgba(43, 47, 51, .45);
+  background: rgba(255, 255, 255, .6);
+  border: 1px solid rgba(255, 255, 255, .9);
+  border-radius: 50%;
+  box-shadow: 0 8px 22px rgba(16, 60, 56, .1), inset 0 1px 0 rgba(255, 255, 255, .8);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  backdrop-filter: blur(12px) saturate(140%);
+}
+.cs-person.is-core { color: var(--reg-accent-dark); background: rgba(255, 255, 255, .9); box-shadow: 0 0 0 2px rgba(17, 213, 203, .3), 0 6px 16px rgba(16, 60, 56, .14); }
+.cs-person svg { width: 20px; height: 20px; }
+.cs-team.is-ready .cs-person { opacity: 0; scale: .4; }
+.cs-team.is-on .cs-person { animation: cs-person-in .55s cubic-bezier(.3, 1.4, .5, 1) var(--d, 0ms) both; }
+@keyframes cs-person-in { from { opacity: 0; scale: .4; } to { opacity: 1; scale: 1; } }
+
+/* Карточка во всю ширину (планшет): текст и плашки слева, команда справа */
+@media (581px <= width <= 1150px) {
+  .fit-card.cs-card:has(.cs-team) { display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto 1fr; column-gap: 32px; }
+  .fit-card.cs-card:has(.cs-team) .cs-visual { grid-row: 2; align-self: end; }
+  .cs-team { grid-column: 2; grid-row: 1 / 3; align-self: center; margin: 0; }
+}
+@media (width <= 580px) {
+  .cs-team { --pitch: 39px; }
+  .cs-person { width: 35px; height: 35px; }
+  .cs-person svg { width: 18px; height: 18px; }
+}

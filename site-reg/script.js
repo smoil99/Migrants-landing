@@ -372,8 +372,38 @@ $$('.method-toggle').forEach(btn => btn.addEventListener('click', () => {
     consent = saved?.expires > Date.now() ? saved.allowed : null;
   } catch { /* при недоступном хранилище баннер просто показывается снова */ }
   banner.hidden = consent !== null;
+  // высота открытого баннера — в --cookie-h: первый экран держит над ним отступ (theme-reg.css)
+  const root = document.documentElement;
+  const sync = () => root.style.setProperty('--cookie-h', banner.hidden ? '0px' : `${banner.offsetHeight}px`);
+  new ResizeObserver(sync).observe(banner);
+  sync();
   $('#accept-cookie').addEventListener('click', () => {
     try { localStorage.setItem(KEY, JSON.stringify({ allowed: true, expires: Date.now() + DURATION })); } catch { /* только текущий сеанс */ }
     banner.hidden = true;
+    sync();
   });
+})();
+
+/* ——— «Объём проекта»: фигурки специалистов (три ряда по 5) появляются от центра к краям — команда «собирается» ——— */
+(() => {
+  const team = $('[data-team]');
+  if (!team) return;
+  const ROWS = [5, 5, 5];
+  const PERSON = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0z"/></svg>';
+  // ряды выровнены по левому краю, средний сдвинут на полшага; центр группы — среднее по всем фигуркам
+  const x = (r, c) => c + (r === 1 ? .5 : 0);
+  const all = ROWS.flatMap((n, r) => Array.from({ length: n }, (_, c) => x(r, c)));
+  const cx = all.reduce((a, v) => a + v, 0) / all.length;
+  team.innerHTML = ROWS.map((n, r) => `<div class="cs-team-row">${Array.from({ length: n }, (_, c) => {
+    const d = Math.hypot(x(r, c) - cx, (r - 1) * .87);              // расстояние от центра группы
+    return `<span class="cs-person${d < 1 ? ' is-core' : ''}" style="--d:${Math.round(250 + d * 260)}ms">${PERSON}</span>`;
+  }).join('')}</div>`).join('');
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+  team.classList.add('is-ready');
+  const io = new IntersectionObserver(([e]) => {
+    if (!e.isIntersecting) return;
+    io.disconnect();
+    team.classList.add('is-on');
+  }, { threshold: .6 });
+  io.observe(team);
 })();
