@@ -1,7 +1,8 @@
 /*
   Первый экран с видео.
-  Фон: видео без звука, по кругу, затемнено. Вне экрана ставится на паузу.
-  «Смотреть видео»: текст скрывается, затемнение снимается, ролик с начала, со звуком и элементами управления.
+  Фон: короткое превью без звука (src), по кругу, затемнено. Вне экрана ставится на паузу.
+  «Смотреть видео»: текст скрывается, затемнение снимается, вместо превью — полный ролик со звуком
+  (data-full-src) с начала и с элементами управления. После выхода снова превью.
   Выход: кнопка «Закрыть видео», Esc или конец ролика.
 */
 (() => {
@@ -13,10 +14,19 @@
   const watchBtn = hero.querySelector('[data-action="watch-video"]');
   const closeBtn = hero.querySelector('[data-action="close-video"]');
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const preview = { src: video.getAttribute('src'), poster: video.getAttribute('poster') };
+  const full = { src: video.dataset.fullSrc || preview.src, poster: video.dataset.fullPoster || preview.poster };
   let watching = false;
   let onScreen = true;
+  let buried = false;   // первый экран закреплён и целиком перекрыт следующим блоком
 
-  const playSilently = () => { if (!reduceMotion && onScreen && !watching) video.play().catch(() => {}); };
+  function setSource({ src, poster }) {
+    if (video.getAttribute('src') === src) return;
+    video.poster = poster;
+    video.src = src;
+  }
+
+  const playSilently = () => { if (!reduceMotion && onScreen && !buried && !watching) video.play().catch(() => {}); };
 
   if (reduceMotion) { video.removeAttribute('autoplay'); video.pause(); }
 
@@ -24,8 +34,9 @@
     watching = true;
     hero.classList.add('is-watching');
     stack?.classList.add('is-watching');
-    document.documentElement.classList.add('is-watching-video');   // прячет шапку
+    document.documentElement.classList.add('is-watching-video');   // прячет шапку и запрещает прокрутку страницы
     closeBtn.hidden = false;
+    setSource(full);
     video.loop = false;
     video.muted = false;
     video.controls = true;
@@ -45,6 +56,7 @@
     video.controls = false;
     video.muted = true;
     video.loop = true;
+    setSource(preview);
     playSilently();
     watchBtn.focus({ preventScroll: true });
   }
@@ -66,13 +78,19 @@
     const h = hero.offsetHeight;
     const covered = hero.getBoundingClientRect().bottom - cover.getBoundingClientRect().top;
     hero.style.setProperty('--hero-dim', (Math.min(Math.max(covered / (h * DIM_AT), 0), 1) * DIM_MAX).toFixed(3));
+    // Под перекрывшим его блоком видео не видно — пауза, чтобы не перерисовывать стекло на первом экране каждый кадр
+    const nowBuried = covered >= h - 1;
+    if (nowBuried !== buried) {
+      buried = nowBuried;
+      if (buried) video.pause(); else playSilently();
+    }
   }
   const scheduleDim = () => { if (!dimQueued) { dimQueued = true; requestAnimationFrame(updateDim); } };
   addEventListener('scroll', scheduleDim, { passive: true });
   addEventListener('resize', scheduleDim);
   updateDim();
 
-  // Фоновое видео не крутится, когда первого экрана не видно
+  // Фоновое видео не крутится, когда первого экрана не видно (или он перекрыт — см. updateDim)
   new IntersectionObserver(([entry]) => {
     onScreen = entry.isIntersecting;
     if (!onScreen && !watching) video.pause();

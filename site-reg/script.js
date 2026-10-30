@@ -4,9 +4,6 @@
   Здесь только поведение и тексты, которые зависят от разбора запроса.
 */
 
-// Адрес обработчика заявок (POST, JSON). Пусто — заявка никуда не отправляется, показывается демо-экран успеха.
-const LEAD_ENDPOINT = '';
-
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
@@ -221,8 +218,7 @@ function submitQuery(text = textarea.value) {
   $$('#result [data-field]').forEach(input => { input.value = state.intent[input.dataset.field]; });
   $('#result').hidden = false;
   renderResult();
-  if (state.intent.kind === 'consultation') openLead();
-  else scrollToResult();
+  scrollToResult();
 }
 
 function resultTitle({ kind, industry }) {
@@ -280,109 +276,6 @@ function editIntentField(field, value) {
   renderResult();
 }
 
-/* ——— Окно заявки ——— */
-
-const dialog = $('#lead-dialog');
-const leadForm = $('#lead-form');
-// Короткая заявка на консультацию (Lead): обязательны имя, компания, телефон и «кого нанять»;
-// email — по желанию, но если указан, должен быть корректным; количество и комментарий — по желанию
-const FIELDS = ['contact_name', 'company_name', 'contact_phone', 'contact_email', 'hire_who', 'specialists_count', 'comment'];
-const field = key => $(`#lead-${key}`);
-
-function validateLead() {
-  const v = Object.fromEntries(FIELDS.map(k => [k, field(k).value]));
-  const errors = {};
-  if (v.contact_name.trim().length < 2 || v.contact_name.length > 100) errors.contact_name = 'Укажите имя';
-  if (!v.company_name.trim() || v.company_name.length > 200) errors.company_name = 'Укажите компанию';
-  if (!/^[78]\d{10}$/.test(v.contact_phone.replace(/\D/g, ''))) errors.contact_phone = 'Проверьте номер телефона: +7 и 10 цифр';
-  if (v.contact_email.trim() && (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.contact_email.trim()) || v.contact_email.length > 254)) errors.contact_email = 'Проверьте адрес электронной почты';
-  if (!v.hire_who.trim() || v.hire_who.length > 200) errors.hire_who = 'Укажите, кого хотите нанять';
-  if (!$('#lead-consent').checked) errors.consent = 'Подтвердите согласие';
-  return { values: v, errors };
-}
-
-function setFieldError(key, message) {
-  const input = key === 'consent' ? $('#lead-consent') : field(key);
-  const id = `${key}-error`;
-  $(`#${id}`)?.remove();
-  input.setAttribute('aria-invalid', String(Boolean(message)));
-  if (!message) { input.removeAttribute('aria-describedby'); return; }
-  const el = document.createElement(key === 'consent' ? 'p' : 'small');
-  el.className = 'error';
-  el.id = id;
-  el.textContent = message;
-  input.setAttribute('aria-describedby', id);
-  if (key === 'consent') $('.consent', leadForm).after(el);
-  else input.after(el);
-}
-
-function showLeadView(view) {
-  $$('[data-lead-view]', dialog).forEach(v => { v.hidden = v.dataset.leadView !== view; });
-}
-
-function openLead() {
-  const { intent, query, mode } = state;
-  if (intent.profession) field('hire_who').value = intent.profession;
-  if (intent.count) field('specialists_count').value = intent.count;
-
-  const summary = $('[data-lead-view="form"] .context-summary', dialog);
-  const hasContext = Boolean(query || intent.profession);
-  summary.hidden = !hasContext;
-  if (hasContext) {
-    $('[data-context="title"]', dialog).textContent = intent.profession || 'Поможем разобраться';
-    $('[data-context="details"]', dialog).textContent =
-      [intent.count && `${intent.count} специалистов`, intent.region, intent.deadline].filter(Boolean).join(' · ') || stripContacts(query);
-    $('[data-context="mode"]', dialog).textContent = `Способ привлечения: ${modeTitle(mode)}`;
-  }
-  showLeadView('form');
-  setMenu(false);
-  dialog.showModal();
-}
-
-function closeLead() {
-  dialog.close();
-}
-
-function resetLead() {
-  leadForm.reset();
-  [...FIELDS, 'consent'].forEach(k => setFieldError(k, ''));
-  field('hire_who').value = state.intent.profession || '';
-  field('specialists_count').value = state.intent.count || '';
-  showLeadView('form');
-}
-
-async function submitLead(event) {
-  event.preventDefault();
-  const { values, errors } = validateLead();
-  [...FIELDS, 'consent'].forEach(k => setFieldError(k, errors[k]));
-  const firstError = Object.keys(errors)[0];
-  if (firstError) {
-    (firstError === 'consent' ? $('#lead-consent') : field(firstError)).focus();
-    return;
-  }
-
-  const submit = $('button[type=submit]', leadForm);
-  if (LEAD_ENDPOINT) {
-    submit.disabled = true;
-    try {
-      const response = await fetch(LEAD_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fields: values, query: stripContacts(state.query).slice(0, 600), intent: state.intent, mode: state.mode }),
-      });
-      if (!response.ok) throw new Error(response.statusText);
-    } catch {
-      alert('Не удалось отправить заявку. Проверьте соединение и попробуйте ещё раз.');
-      return;
-    } finally {
-      submit.disabled = false;
-    }
-  }
-
-  showLeadView('success');
-  $('#success-title').focus();
-}
-
 /* ——— Подключение обработчиков ——— */
 
 document.addEventListener('click', event => {
@@ -390,18 +283,7 @@ document.addEventListener('click', event => {
   if (!el) return;
   const { action, query, variant, mode, step, industry, topic } = el.dataset;
 
-  if (action === 'lead') return openLead();
-  if (action === 'close-lead') return closeLead();
-  if (action === 'reset-lead') return resetLead();
   if (action === 'focus-intent') return focusIntent();
-  if (action === 'demo-contacts') {
-    field('contact_name').value = 'Тестовый Клиент';
-    field('contact_phone').value = '+7 000 000-00-00';
-    field('contact_email').value = 'demo@example.com';
-    field('company_name').value = 'ООО Тестовый проект';
-    if (!field('hire_who').value) field('hire_who').value = 'Сварщики';
-    return;
-  }
   if (query) return submitQuery(query);
   if (variant) return setVariant(variant);
   if (mode && el.closest('.mode-tabs')) return selectMode(mode);
@@ -438,11 +320,6 @@ $$('#result [data-field]').forEach(input => {
   input.addEventListener('input', () => editIntentField(input.dataset.field, input.value));
 });
 
-leadForm.addEventListener('submit', submitLead);
-FIELDS.forEach(k => field(k).addEventListener('input', () => setFieldError(k, '')));
-$('#lead-consent').addEventListener('change', () => setFieldError('consent', ''));
-// Клик по затемнённому фону закрывает окно
-dialog.addEventListener('click', event => { if (event.target === dialog) closeLead(); });
 
 // Начальное состояние
 if ($('[data-variant]')) setVariant(new URLSearchParams(location.search).get('variant') === 'focus' ? 'focus' : 'editorial', false);
@@ -483,3 +360,20 @@ $$('.method-toggle').forEach(btn => btn.addEventListener('click', () => {
   btn.setAttribute('aria-expanded', String(open));
   $(`#${btn.getAttribute('aria-controls')}`).inert = !open;
 }));
+
+/* ——— Согласие cookie (как в Codex-версии): баннер до принятия, решение хранится 180 дней ——— */
+(() => {
+  const banner = $('#cookie-banner');
+  if (!banner) return;
+  const KEY = 'landing-consent', DURATION = 15552000000;
+  let consent = null;
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
+    consent = saved?.expires > Date.now() ? saved.allowed : null;
+  } catch { /* при недоступном хранилище баннер просто показывается снова */ }
+  banner.hidden = consent !== null;
+  $('#accept-cookie').addEventListener('click', () => {
+    try { localStorage.setItem(KEY, JSON.stringify({ allowed: true, expires: Date.now() + DURATION })); } catch { /* только текущий сеанс */ }
+    banner.hidden = true;
+  });
+})();

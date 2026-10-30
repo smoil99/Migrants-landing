@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">
+    <title>Роли сторон — Работа.ру</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="theme-reg.css">
+    <script src="https://cdn.jsdelivr.net/npm/d3-array@3.2.4/dist/d3-array.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-geo@3.1.1/dist/d3-geo.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js" defer></script>
+    <script src="roles.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <section class="roles-flow" id="roles" aria-labelledby="roles-heading">
+        <div class="container roles-flow-grid">
+          <div class="roles-flow-text">
+            <div class="roles-flow-head">
+              <p class="eyebrow">Роли сторон</p>
+              <h2 id="roles-heading">Что организуем мы и что остаётся за вами?</h2>
+              <p>Работы исполнителя и обязанности работодателя на каждом этапе проекта.</p>
+            </div>
+
+            <article class="roles-step" data-stage="0">
+              <span class="roles-step-num">01</span>
+              <h3>Определение потребности</h3>
+              <div class="roles-side"><div><small>Мы организуем</small><p>Уточнение потребности и применимой схемы</p></div></div>
+              <div class="roles-side"><div><small>Ваше участие</small><p>Описание задач, согласование условий и требований</p></div></div>
+            </article>
+
+            <article class="roles-step" data-stage="1">
+              <span class="roles-step-num">02</span>
+              <h3>Поиск и оценка</h3>
+              <div class="roles-side"><div><small>Мы организуем</small><p>Поиск, первичная проверка, согласованные тесты, материалы о кандидатах</p></div></div>
+              <div class="roles-side"><div><small>Ваше участие</small><p>Согласование кандидатов при желании участвовать в отборе</p></div></div>
+            </article>
+
+            <article class="roles-step" data-stage="2">
+              <span class="roles-step-num">03</span>
+              <h3>Документы и переезд</h3>
+              <div class="roles-side"><div><small>Мы организуем</small><p>Согласованный объём подготовки документов, визы, релокации и встреч</p></div></div>
+              <div class="roles-side"><div><small>Ваше участие</small><p>Исходные документы и сведения; действия, закреплённые за работодателем применимой схемой</p></div></div>
+            </article>
+
+            <article class="roles-step" data-stage="3">
+              <span class="roles-step-num">04</span>
+              <h3>Трудоустройство и выход</h3>
+              <div class="roles-side"><div><small>Мы организуем</small><p>Сопровождение легализации и подготовки к выходу</p></div></div>
+              <div class="roles-side"><div><small>Ваше участие</small><p>Заключение трудового договора, условия труда и выплаты по применимой схеме и договору</p></div></div>
+            </article>
+
+            <article class="roles-step" data-stage="4">
+              <span class="roles-step-num">05</span>
+              <h3>Работа после выхода</h3>
+              <div class="roles-side"><div><small>Мы организуем</small><p>Согласованное сопровождение, помощь в адаптации, поддержка и процедура замены</p></div></div>
+              <div class="roles-side"><div><small>Ваше участие</small><p>Допуск к работе, управление задачами на объекте и взаимодействие по сопровождению</p></div></div>
+            </article>
+
+            <p class="roles-flow-note">Состав работ и границы ответственности фиксируются в коммерческом предложении и договоре. Ответственность работодателя определяется законодательством и выбранной схемой.</p>
+          </div>
+
+          <div class="roles-stage">
+            <canvas class="roles-canvas" role="img" aria-label="Глобус: этапы проекта от потребности в России до работы специалиста из Индии"></canvas>
+            <div class="roles-caption" aria-hidden="true"><span class="roles-dots"><i class="is-active"></i><i></i><i></i><i></i><i></i></span><b data-roles-caption>Определение потребности</b></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

@@ -6,7 +6,8 @@
   поэтому новые секции получают анимацию сами. Блок — это первый (самый внешний) элемент, который:
     • заголовок, абзац, список, картинка, кнопка, карточка (<article>, класс со словами card/item/tile) и т. п.;
     • или «плашка» — элемент со своим фоном (цвет или картинка): появляется целиком вместе с содержимым.
-  Не анимируются: первый экран, окно-демо «5 шагов» и всё внутри уже найденного блока.
+  Не анимируются по прокрутке: первый экран, окно-демо «5 шагов» и всё внутри уже найденного блока.
+  Первый экран появляется так же, но сразу при загрузке: плашка, заголовок, описание, кнопки — друг за другом.
   Чтобы исключить элемент вручную — атрибут data-no-reveal.
 */
 (() => {
@@ -57,22 +58,28 @@
   };
   units.forEach(el => el.classList.add('rv', ...(inScroller(el) ? ['rv-fade'] : [])));
 
+  function show(el, i) {
+    el.style.setProperty('--rv-delay', `${Math.min(i, MAX_STAGGER) * STAGGER}ms`);
+    el.classList.add('rv-in');
+    // После появления — убрать служебные классы, чтобы не мешать собственным анимациям элемента
+    el.addEventListener('animationend', function done(event) {
+      if (event.target !== el || event.animationName !== 'rv-in') return;
+      el.removeEventListener('animationend', done);
+      el.classList.remove('rv', 'rv-in', 'rv-fade');
+      el.style.removeProperty('--rv-delay');
+    });
+  }
+
   const io = new IntersectionObserver(entries => {
     const shown = entries.filter(e => e.isIntersecting).map(e => e.target)
       .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
-    shown.forEach((el, i) => {
-      io.unobserve(el);
-      el.style.setProperty('--rv-delay', `${Math.min(i, MAX_STAGGER) * STAGGER}ms`);
-      el.classList.add('rv-in');
-      // После появления — убрать служебные классы, чтобы не мешать собственным анимациям элемента
-      el.addEventListener('animationend', function done(event) {
-        if (event.target !== el || event.animationName !== 'rv-in') return;
-        el.removeEventListener('animationend', done);
-        el.classList.remove('rv', 'rv-in', 'rv-fade');
-        el.style.removeProperty('--rv-delay');
-      });
-    });
+    shown.forEach((el, i) => { io.unobserve(el); show(el, i); });
   }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
 
   units.forEach(el => io.observe(el));
+
+  // Первый экран: сразу после загрузки, в порядке показа (у описания и кнопок свой CSS order)
+  const heroUnits = [...document.querySelectorAll('.hero-content > *')]
+    .sort((a, b) => (parseInt(getComputedStyle(a).order) || 0) - (parseInt(getComputedStyle(b).order) || 0));
+  heroUnits.forEach((el, i) => { el.classList.add('rv'); show(el, i + 1); });
 })();
