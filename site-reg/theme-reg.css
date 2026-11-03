@@ -2389,8 +2389,8 @@ div.bf-drop .bf-drop-btn { display: flex; flex-direction: column; align-items: c
 @media (width <= 580px) { #main h2 { font-size: 30px; } }
 
 /* «Не уверены в способе?»: объёмная фигура справа, текст и кнопка держатся слева от неё. На телефоне фигуры нет — не хватает ширины */
-/* Фон плашки; слева плотное затемнение — под текст, справа лёгкое — чтобы фигура не сливалась с ярко-зелёным */
-.methods-cta.contact-section { position: relative; overflow: hidden; background: linear-gradient(90deg, rgba(13, 15, 17, .82) 0%, rgba(13, 15, 17, .62) 55%, rgba(13, 15, 17, .3) 100%), #1b1c1f url(features/cta-bg-wave.webp) center / cover no-repeat; }
+/* Фон плашки: предоставленное изображение без затемняющего слоя. */
+.methods-cta.contact-section { position: relative; overflow: hidden; background: #1b1c1f url(features/cta-bg-green.webp) center / cover no-repeat; }
 .methods-cta-art { position: absolute; top: 50%; right: 48px; width: 220px; height: auto; translate: 0 -50%; pointer-events: none; }
 .methods-cta .contact-inner { padding-right: 280px; }
 @media (width <= 1000px) {
@@ -2661,3 +2661,93 @@ div.bf-drop .bf-drop-btn { display: flex; flex-direction: column; align-items: c
 }
 .rep-visual .cs-row.is-current .cs-line { color: var(--ink); background: rgba(255, 255, 255, .8); box-shadow: var(--fit-ring); }
 .rep-visual .cs-row.is-current .cs-icon { color: var(--fit-accent); }
+
+/* Локальная правка: высота блока уменьшена на 30% с 406 px. */
+#uncertainty { min-height: 284px; padding-block: 12px; display: flex; align-items: center; }
+#uncertainty .contact-inner { width: 100%; }
+
+#uncertainty .methods-cta-art { right: 16px; width: 43%; max-width: 510px; }
+#uncertainty .contact-inner { padding-right: 43%; }
+@media (width <= 700px) {
+  #uncertainty { flex-direction: column; padding-bottom: 16px; }
+  #uncertainty .contact-inner { padding-right: 0; }
+  #uncertainty .methods-cta-art { display: block; position: relative; order: 1; top: auto; right: auto; translate: none; width: 100%; max-width: 360px; margin: 20px auto 0; }
+}
+
+/* Зеркальный фон отдельным слоем, без отражения текста и иллюстрации. */
+#uncertainty { isolation: isolate; background: #1b1c1f; }
+#uncertainty::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: url(features/cta-bg-green.webp) center / cover no-repeat;
+  transform: scaleX(-1);
+  pointer-events: none;
+}
+#uncertainty .watch-shadow { filter: blur(12px); opacity: .35; }
+#uncertainty .beam-button,
+#uncertainty .beam-button:hover:not(:disabled) {
+  text-decoration: none;
+  box-shadow: inset 0 .125em .125em rgba(0, 0, 0, .05),
+    inset 0 -.125em .125em rgba(255, 255, 255, .15),
+    0 6px 18px rgba(0, 0, 0, .1),
+    inset 0 0 .1em .25em rgba(255, 255, 255, .06);
+}
+
+/* Адаптивная композиция: фон с волной у нижнего края, контент в независимых колонках. */
+#uncertainty {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: clamp(16px, 3vw, 40px);
+  padding: clamp(24px, 3vw, 40px);
+  min-height: 284px;
+}
+#uncertainty::before {
+  background-position: center top;
+  background-size: 100% 160%;
+}
+#uncertainty .contact-inner {
+  grid-column: 1;
+  grid-row: 1;
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  gap: 24px;
+}
+#uncertainty .methods-cta-art {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1;
+  top: auto;
+  right: auto;
+  translate: none;
+  width: 100%;
+  max-width: 510px;
+  height: auto;
+  margin: 0;
+  justify-self: center;
+}
+#uncertainty .cta-buttons { width: 100%; flex-direction: row; }
+#uncertainty .watch-wrap { width: fit-content; max-width: 100%; }
+#uncertainty .beam-button { white-space: normal; }
+@media (width <= 760px) {
+  #uncertainty { grid-template-columns: minmax(0, 1fr); gap: 20px; padding: 24px; }
+  #uncertainty .methods-cta-art { grid-column: 1; grid-row: 2; max-width: 360px; }
+  #uncertainty::before { background-size: auto 150%; }
+  #uncertainty .watch-wrap { width: 100%; }
+  #uncertainty .beam-button { justify-content: space-between; width: 100%; }
+}
+@media (width <= 360px) {
+  #uncertainty { padding: 20px; }
+  #uncertainty .beam-button { padding-inline: 16px; gap: 12px; font-size: 14px; }
+}
+
+/* Компактнее по высоте; нижняя светлая волна остаётся за кадром. */
+#uncertainty { padding-block: 16px; min-height: 260px; }
+#uncertainty::before { background-size: 100% 190%; }
+#uncertainty .methods-cta-art { max-height: 250px; object-fit: contain; }
+@media (width <= 760px) {
+  #uncertainty { padding-block: 20px; }
+  #uncertainty::before { background-size: auto 190%; }
+}
