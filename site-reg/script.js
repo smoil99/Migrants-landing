@@ -384,26 +384,81 @@ $$('.method-toggle').forEach(btn => btn.addEventListener('click', () => {
   });
 })();
 
-/* ——— «Объём проекта»: фигурки специалистов (три ряда по 5) появляются от центра к краям — команда «собирается» ——— */
+const ART_END = 2000;   // все три иллюстрации «Подойдёт ли решение» заканчивают анимацию одновременно, мс
+
+/* ——— «Объём проекта»: фигурки специалистов (три ряда шире карточки, края растворяются) появляются от центра к краям — команда «собирается» ——— */
 (() => {
   const team = $('[data-team]');
   if (!team) return;
-  const ROWS = [5, 5, 5];
+  const ROWS = [11, 11, 11];
+  const ACCENT = ['0-3', '0-5', '0-8', '1-1', '1-6', '2-4', '2-9'];   // зелёные фигурки вразброс: «ряд-место»
   const PERSON = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0z"/></svg>';
-  // ряды выровнены по левому краю, средний сдвинут на полшага; центр группы — среднее по всем фигуркам
+  // средний ряд сдвинут на полшага; центр группы — среднее по всем фигуркам
   const x = (r, c) => c + (r === 1 ? .5 : 0);
   const all = ROWS.flatMap((n, r) => Array.from({ length: n }, (_, c) => x(r, c)));
   const cx = all.reduce((a, v) => a + v, 0) / all.length;
+  const dist = (r, c) => Math.hypot(x(r, c) - cx, (r - 1) * .87);    // расстояние от центра группы
+  const far = Math.max(...ROWS.flatMap((n, r) => Array.from({ length: n }, (_, c) => dist(r, c))));
   team.innerHTML = ROWS.map((n, r) => `<div class="cs-team-row">${Array.from({ length: n }, (_, c) => {
-    const d = Math.hypot(x(r, c) - cx, (r - 1) * .87);              // расстояние от центра группы
-    return `<span class="cs-person${d < 1 ? ' is-core' : ''}" style="--d:${Math.round(250 + d * 260)}ms">${PERSON}</span>`;
+    const delay = Math.round(250 + dist(r, c) / far * (ART_END - 250 - 550));   // 550 — длительность появления, как в theme-reg.css
+    return `<span class="cs-person${ACCENT.includes(`${r}-${c}`) ? ' is-core' : ''}" style="--d:${delay}ms">${PERSON}</span>`;
   }).join('')}</div>`).join('');
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
-  team.classList.add('is-ready');
-  const io = new IntersectionObserver(([e]) => {
-    if (!e.isIntersecting) return;
-    io.disconnect();
-    team.classList.add('is-on');
-  }, { threshold: .6 });
-  io.observe(team);
+})();
+
+/* ——— «Подойдёт ли решение»: иллюстрации оживают, когда попадают на экран. На широком экране карточки стоят в одном ряду
+   и стартуют одновременно, на телефоне — каждая при появлении ———
+   «Объём проекта» — фигурки собираются, «Понятные роли» — профессии выкатываются, «Что предстоит уточнить» — значок и набор текста */
+(() => {
+  const arts = $$('.cs-art');
+  if (!arts.length || matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+
+  // профессии выкатываются друг за другом по всем строкам; 600 — длительность выката, как в theme-reg.css
+  const chips = $$('.cs-chip-row .cs-glass');
+  chips.forEach((chip, i) => chip.style.setProperty('--d', `${Math.round(250 + i / (chips.length - 1) * (ART_END - 250 - 600))}ms`));
+
+  // Текст строки делится на набранную и ещё скрытую части: скрытая держит ширину, поэтому при наборе ничего не сдвигается
+  const lines = $$('.cs-art-rows .cs-row').map(row => {
+    const line = $('.cs-line', row), text = line.textContent;
+    line.innerHTML = '<span class="cs-typed"></span><span class="cs-rest"></span>';
+    const [typed, rest] = line.children;
+    rest.textContent = text;
+    $$('path', row).forEach(path => path.setAttribute('pathLength', 1));
+    return { row, typed, rest, text };
+  });
+
+  // Расписание считается от общего времени: текст допечатывается за 300 мс до конца, и в эти 300 мс загорается акцент
+  function typeRows() {
+    const START = 100, ICON = 160, GAP = 40, last = ART_END - 300;
+    const chars = lines.reduce((sum, { text }) => sum + text.length, 0);
+    const perChar = (last - START - lines.length * ICON - (lines.length - 1) * GAP) / chars;
+    let at = START;
+    lines.forEach(line => {
+      line.start = at;
+      line.from = at + ICON;
+      line.end = line.from + line.text.length * perChar;
+      at = line.end + GAP;
+    });
+    const t0 = performance.now();
+    requestAnimationFrame(function step(now) {
+      const t = now - t0;
+      lines.forEach(({ row, typed, rest, text, start, from, end }) => {
+        row.classList.toggle('is-start', t >= start);
+        row.classList.toggle('is-done', t >= end);
+        const n = Math.min(text.length, Math.max(0, Math.ceil((t - from) / perChar)));
+        if (typed.textContent.length !== n) {
+          typed.textContent = text.slice(0, n);
+          rest.textContent = text.slice(n);
+        }
+      });
+      if (t < last) requestAnimationFrame(step);
+    });
+  }
+
+  arts.forEach(art => art.classList.add('is-ready'));
+  const io = new IntersectionObserver(entries => entries.filter(e => e.isIntersecting).forEach(({ target }) => {
+    io.unobserve(target);
+    target.classList.add('is-on');
+    if ($('.cs-art-rows', target)) typeRows();
+  }), { threshold: .6 });
+  arts.forEach(art => io.observe(art));
 })();

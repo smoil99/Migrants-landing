@@ -262,7 +262,7 @@ h1 > span { color: var(--reg-accent); }
   content: "";
   position: absolute;
   inset: -1px;
-  padding: 2px;
+  padding: 1px;
   border-radius: inherit;
   pointer-events: none;
   background: conic-gradient(from var(--beam-angle),
@@ -289,7 +289,7 @@ h1 > span { color: var(--reg-accent); }
     var(--beam-mint) 60%, #fff 70%, var(--beam-mint) 80%,
     transparent 95%, transparent 100%);
   filter: blur(14px);
-  opacity: .75;
+  opacity: .375;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -732,15 +732,6 @@ footer { color: rgba(255, 255, 255, .6); background: #181818; border-radius: 64p
 .hero h1 { margin-bottom: 26px; font-size: clamp(2.4rem, 4.3vw, 3.75rem); line-height: 1.04; }
 .hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 24px; }
 .hero-actions .button { min-height: 54px; padding: 14px 24px; font-size: 1rem; }
-.hero-watch {
-  gap: 12px;
-  color: #fff;
-  background: rgba(255, 255, 255, .12);
-  border: 1px solid rgba(255, 255, 255, .28);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-}
-.hero-watch:hover { background: rgba(255, 255, 255, .2); }
 .hero-play { display: grid; place-items: center; width: 26px; height: 26px; padding-left: 2px; color: var(--reg-black); background: var(--reg-accent); border-radius: 50%; }
 .hero .hero-cta { color: var(--reg-black); background: var(--reg-accent); }
 .hero .hero-cta:hover:not(:disabled) { background: var(--reg-accent-hover); }
@@ -1002,10 +993,8 @@ footer { color: rgba(255, 255, 255, .6); background: #181818; border-radius: 64p
 
 /* Стеклянные элементы первого экрана: обводка-градиент по диагонали (как у статуса в Figma Migrants 7757:68209) —
    ярче в левом верхнем углу, гаснет к середине, снова светлее в правом нижнем */
-.hero-watch,
 .hero-bubble,
 .hero-paths a { position: relative; border-color: transparent; }
-.hero-watch::before,
 .hero-bubble::before,
 .hero-paths a::before {
   content: "";
@@ -1183,7 +1172,8 @@ footer { color: rgba(255, 255, 255, .6); background: #181818; border-radius: 64p
 @media (width <= 580px) { .rep-visual .cs-row { width: 100%; } .rep-visual .cs-line { white-space: normal; } }
 
 /* «Люди и навыки…»: тот же фон, что у десктопной плашки «5 шагов» (flow-bg.webp: тёмный слева, зелёный справа и снизу) */
-.why-section { background: #1b1c1f url(flow-bg.webp) center / cover no-repeat; }
+/* Подложка блока; затемнение слева — чтобы заголовок и текст читались на ярком зелёном */
+.why-section { background: linear-gradient(90deg, rgba(13, 15, 17, .72) 0%, rgba(13, 15, 17, .5) 45%, rgba(13, 15, 17, .05) 75%), #1b1c1f url(features/why-bg-wave.webp) center / cover no-repeat; }
 .why-item { background: rgba(20, 22, 25, .6); border-color: rgba(255, 255, 255, .14); }  /* тёмное стекло — текст читается и над зелёным */
 
 /* Плитка с готовой SVG-иллюстрацией (подложка, свечение и скругление уже внутри картинки) */
@@ -2275,9 +2265,9 @@ div.bf-drop .bf-drop-btn { display: flex; flex-direction: column; align-items: c
 
 /* «Объём проекта»: группа специалистов собирается от центра в команду, когда карточка появляется на экране.
    Фигурки без цифр — объём набора на странице не называется (US-020). Разметку строит script.js */
-.cs-team { --pitch: 42px; display: grid; gap: 4px; justify-items: start; margin: auto 0; }   /* шаг = фигурка + зазор */
+.cs-team { --pitch: 42px; display: grid; gap: 4px; justify-items: start; }   /* шаг = фигурка + зазор */
 .cs-team-row { display: flex; gap: 4px; }
-.cs-team-row:nth-child(2) { margin-left: calc(var(--pitch) / 2); }   /* средний ряд — со сдвигом, «сотами» */
+.cs-team-row:nth-child(2) { translate: calc(var(--pitch) / 2) 0; }   /* средний ряд — со сдвигом, «сотами» */
 .cs-person {
   display: grid;
   place-items: center;
@@ -2293,18 +2283,381 @@ div.bf-drop .bf-drop-btn { display: flex; flex-direction: column; align-items: c
 }
 .cs-person.is-core { color: var(--reg-accent-dark); background: rgba(255, 255, 255, .9); box-shadow: 0 0 0 2px rgba(17, 213, 203, .3), 0 6px 16px rgba(16, 60, 56, .14); }
 .cs-person svg { width: 20px; height: 20px; }
-.cs-team.is-ready .cs-person { opacity: 0; scale: .4; }
-.cs-team.is-on .cs-person { animation: cs-person-in .55s cubic-bezier(.3, 1.4, .5, 1) var(--d, 0ms) both; }
+.cs-art.is-ready .cs-person { opacity: 0; scale: .4; }
+.cs-art.is-on .cs-person { animation: cs-person-in .55s cubic-bezier(.3, 1.4, .5, 1) var(--d, 0ms) both; }
 @keyframes cs-person-in { from { opacity: 0; scale: .4; } to { opacity: 1; scale: 1; } }
 
-/* Карточка во всю ширину (планшет): текст и плашки слева, команда справа */
-@media (581px <= width <= 1150px) {
-  .fit-card.cs-card:has(.cs-team) { display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto 1fr; column-gap: 32px; }
-  .fit-card.cs-card:has(.cs-team) .cs-visual { grid-row: 2; align-self: end; }
-  .cs-team { grid-column: 2; grid-row: 1 / 3; align-self: center; margin: 0; }
-}
 @media (width <= 580px) {
   .cs-team { --pitch: 39px; }
   .cs-person { width: 35px; height: 35px; }
   .cs-person svg { width: 18px; height: 18px; }
 }
+
+/* «Что входит в сопровождение»: порядок чтения как в большинстве примеров Mobbin — иллюстрация, заголовок, текст;
+   иллюстрации вдвое крупнее (140 → 280 px), на очень узком экране сжимаются по ширине карточки */
+.feat-card.is-small { justify-content: flex-start; gap: 16px; }
+.feat-card.is-small .feat-top { flex-direction: column; gap: 24px; }
+.feat-card.is-small .feat-tile { order: -1; width: min(280px, 100%); height: auto; aspect-ratio: 1; }
+.feat-card.is-small h3 { width: auto; }
+
+/* «Подойдёт ли решение»: сетка в стиле секции Linear — схематичная иллюстрация сверху,
+   под ней заголовок и текст на всю ширину карточки. Светлая версия: карточки на белом фоне секции */
+.fit-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.fit-grid .fit-card.cs-card:nth-child(n) {
+  --ink: #0a162b;
+  --fit-accent: #a9d7f9;
+  --fit-veil: linear-gradient(180deg, transparent 34%, rgba(241, 251, 250, .94) 58%, rgba(241, 251, 250, .94) 88%, rgba(241, 251, 250, .55) 100%);   /* под текстом — #f1fbfa, цвет верха прежних карточек */
+  --fit-ring: 0 0 0 2px var(--fit-accent), 0 0 14px rgba(169, 215, 249, .4);
+  grid-column: auto; gap: 0; min-height: 0; padding: 0; color: var(--ink);
+  border: 1px solid rgba(255, 255, 255, .75);
+  background:
+    var(--fit-veil),
+    radial-gradient(75% 80% at 0% 45%, #a7dce5, transparent 72%),
+    radial-gradient(75% 75% at 100% 100%, #d2f4a0, transparent 72%),
+    radial-gradient(60% 60% at 100% 0%, #bef5e2, transparent 72%),
+    #e8f7f2;
+}
+.fit-grid .fit-card.cs-card:nth-child(2) {
+  background:
+    var(--fit-veil),
+    radial-gradient(75% 80% at 100% 40%, #a7dce5, transparent 72%),
+    radial-gradient(75% 75% at 0% 100%, #d2f4a0, transparent 72%),
+    radial-gradient(60% 60% at 0% 0%, #bef5e2, transparent 72%),
+    #e8f7f2;
+}
+.fit-grid .fit-card.cs-card:nth-child(3) {
+  background:
+    var(--fit-veil),
+    radial-gradient(70% 70% at 15% 0%, #b6f1bb, transparent 72%),
+    radial-gradient(75% 80% at 100% 55%, #bef5e2, transparent 72%),
+    radial-gradient(75% 75% at 0% 100%, #a7dce5, transparent 72%),
+    #e8f7f2;
+}
+.cs-art { display: grid; grid-template-columns: minmax(0, 1fr); place-items: center; height: 180px; overflow: hidden; }
+.fit-card .cs-text { flex: 1; padding: 4px 24px 24px; }
+.fit-card .cs-text h3 { color: var(--ink); font-size: 1.125rem; }
+.fit-card .cs-text p:not(.eyebrow) { color: rgba(10, 22, 43, .5); }
+.fit-card .cs-link { width: fit-content; margin-top: 4px; padding: 0; color: #279bf0; background: none; font-size: .875rem; font-weight: 500; }
+.fit-card .cs-link:hover { background: none; text-decoration: underline; }
+.cs-art .cs-glass, .cs-art .cs-person { background: rgba(255, 255, 255, .55); border: 1px solid rgba(255, 255, 255, .85); box-shadow: 0 2px 10px rgba(169, 215, 249, .12), inset 0 0 6px rgba(255, 255, 255, .7); -webkit-backdrop-filter: none; backdrop-filter: none; }
+.cs-art .cs-glass { padding: 8px 12px; border-radius: 10px; color: rgba(10, 22, 43, .75); font-size: .8125rem; font-weight: 400; white-space: nowrap; }
+.cs-art .cs-person { color: rgba(10, 22, 43, .4); }
+.cs-art .cs-person.is-core { color: var(--fit-accent); background: rgba(255, 255, 255, .85); box-shadow: var(--fit-ring); }
+.cs-art .cs-glass.is-picked, .cs-art .cs-row.is-current .cs-line { color: var(--ink); background: rgba(255, 255, 255, .8); box-shadow: var(--fit-ring); }
+.cs-art .cs-row.is-current .cs-icon { color: var(--fit-accent); }
+.cs-chip-rows { display: grid; gap: 8px; justify-items: center; -webkit-mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent); mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent); }
+.cs-chip-row { display: flex; gap: 8px; }
+.cs-art .cs-team, .cs-chip-rows { padding-block: 6px; }   /* маска режет всё за границей блока: запас, чтобы обводка и тень не обрезались */
+.cs-art .cs-team { grid-template-columns: minmax(0, 1fr); width: 100%; justify-items: center; -webkit-mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent); mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent); }   /* ряды шире карточки и растворяются к краям, как строки профессий */
+.cs-art-rows { display: grid; gap: 8px; width: calc(100% - 48px); }   /* по полям текста карточки */
+.cs-art-rows .cs-row { width: 100%; }
+.cs-art-rows .cs-icon { width: 36px; padding: 8px 0; }
+@media (width <= 850px) {
+  .fit-grid { grid-template-columns: 1fr; }
+  .cs-art { height: 160px; }
+}
+
+/* «Понятные роли»: профессии выкатываются вдоль строки, чётные строки — навстречу нечётным */
+.cs-chip-row:nth-child(even) { --from: 48px; }
+.cs-art.is-ready .cs-chip-row .cs-glass { opacity: 0; }
+.cs-art.is-on .cs-chip-row .cs-glass { animation: cs-chip-in .6s cubic-bezier(.2, .8, .2, 1) var(--d, 0ms) both; }
+@keyframes cs-chip-in { from { opacity: 0; translate: var(--from, -48px) 0; } to { opacity: 1; translate: 0 0; } }
+
+/* «Что предстоит уточнить»: строка за строкой появляется значок, рисуется галочка или стрелка, набирается текст */
+.cs-art-rows .cs-line { gap: 0; }
+.cs-typed, .cs-rest { white-space: pre; }
+.cs-rest { visibility: hidden; }
+.cs-row.is-start:not(.is-done) .cs-typed { box-shadow: 1.5px 0 0 currentColor; }   /* курсор набора */
+.cs-art.is-ready .cs-art-rows .cs-icon { opacity: 0; scale: .5; }
+.cs-art-rows .cs-row.is-start .cs-icon { animation: cs-person-in .4s cubic-bezier(.3, 1.4, .5, 1) both; }
+.cs-art.is-ready .cs-art-rows path { stroke-dasharray: 1 2; stroke-dashoffset: 1.02; }
+.cs-art-rows .cs-row.is-start path { animation: cs-draw .35s ease .12s forwards; }
+@keyframes cs-draw { to { stroke-dashoffset: 0; } }
+.cs-art.is-ready .cs-row.is-current:not(.is-done) .cs-line { color: rgba(10, 22, 43, .75); background: rgba(255, 255, 255, .55); box-shadow: 0 2px 10px rgba(169, 215, 249, .12), inset 0 0 6px rgba(255, 255, 255, .7); }   /* акцент — когда строка набрана */
+.cs-art .cs-row.is-current .cs-line { transition: box-shadow .3s, color .3s; }
+
+/* Тёмные плашки «Почему Индия» и «Четыре способа»: края плашки — по контейнеру страницы, как у остальных секций
+   и «Не уверены в способе?»; внутренние поля (--panel-p) — как у той же плашки */
+.why-section, .methods-section { --page-g: 40px; --panel-p: 40px; box-sizing: border-box; width: min(1240px, 100% - 2 * var(--page-g)); margin-inline: auto; }
+.methods-section { --m-g: var(--panel-p); }
+.why-section .container, .methods-section .container { width: calc(100% - 2 * var(--panel-p)); }
+@media (width <= 1150px) { .why-section, .methods-section { --page-g: 24px; } }
+@media (width <= 580px) { .why-section, .methods-section { --page-g: 18px; --panel-p: 24px; } }
+
+/* Все заголовки разделов — 40 px, на телефоне 30 px; #main перекрывает правила отдельных блоков и их брейкпоинты */
+#main h2 { font-size: 40px; line-height: 1.13; letter-spacing: -.03em; }
+@media (width <= 580px) { #main h2 { font-size: 30px; } }
+
+/* «Не уверены в способе?»: объёмная фигура справа, текст и кнопка держатся слева от неё. На телефоне фигуры нет — не хватает ширины */
+/* Фон плашки; слева плотное затемнение — под текст, справа лёгкое — чтобы фигура не сливалась с ярко-зелёным */
+.methods-cta.contact-section { position: relative; overflow: hidden; background: linear-gradient(90deg, rgba(13, 15, 17, .82) 0%, rgba(13, 15, 17, .62) 55%, rgba(13, 15, 17, .3) 100%), #1b1c1f url(features/cta-bg-wave.webp) center / cover no-repeat; }
+.methods-cta-art { position: absolute; top: 50%; right: 48px; width: 220px; height: auto; translate: 0 -50%; pointer-events: none; }
+.methods-cta .contact-inner { padding-right: 280px; }
+@media (width <= 1000px) {
+  .methods-cta-art { right: 24px; width: 150px; }
+  .methods-cta .contact-inner { padding-right: 180px; }
+}
+@media (width <= 700px) {
+  .methods-cta-art { display: none; }
+  .methods-cta .contact-inner { padding-right: 0; }
+}
+
+/* Кнопка «Смотреть видео» — жидкое стекло: блик пробегает при наведении, обводка поворачивается, при нажатии кнопка
+   наклоняется. Цвета подобраны под тёмное видео: текст белый, тени плотнее */
+@property --watch-angle-1 { syntax: "<angle>"; inherits: false; initial-value: -75deg; }
+@property --watch-angle-2 { syntax: "<angle>"; inherits: false; initial-value: -45deg; }
+.watch-wrap { --watch-t: 400ms; --watch-e: cubic-bezier(.25, 1, .5, 1); position: relative; z-index: 2; display: flex; border-radius: 999px; transition: transform var(--watch-t) var(--watch-e); }
+.watch-shadow { --cut: 2em; position: absolute; top: calc(var(--cut) / -2); left: calc(var(--cut) / -2); width: calc(100% + var(--cut)); height: calc(100% + var(--cut)); filter: blur(clamp(2px, .125em, 12px)); pointer-events: none; }
+.watch-shadow::after {
+  content: "";
+  position: absolute;
+  top: calc(var(--cut) - .5em);
+  left: calc(var(--cut) - .875em);
+  width: calc(100% - var(--cut) - .25em);
+  height: calc(100% - var(--cut) - .25em);
+  box-sizing: border-box;
+  padding: .125em;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, .45), rgba(0, 0, 0, .25));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  transition: top var(--watch-t) var(--watch-e), opacity var(--watch-t) var(--watch-e);
+}
+.hero-watch {
+  --border-width: clamp(1px, .0625em, 4px);
+  position: relative;
+  z-index: 3;
+  flex: 1;
+  padding: 0;
+  color: #fff;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: -.02em;
+  white-space: nowrap;
+  cursor: pointer;
+  border-radius: 999px;
+  background: linear-gradient(-75deg, rgba(255, 255, 255, .025), rgba(255, 255, 255, .1), rgba(255, 255, 255, .025));
+  border: 0;
+  box-shadow:
+    inset 0 .125em .125em rgba(0, 0, 0, .05),
+    inset 0 -.125em .125em rgba(255, 255, 255, .15),
+    0 .25em .125em -.125em rgba(0, 0, 0, .3),
+    inset 0 0 .1em .25em rgba(255, 255, 255, .06);
+  -webkit-backdrop-filter: blur(clamp(1px, .125em, 4px));
+  backdrop-filter: blur(clamp(1px, .125em, 4px));
+  transition: transform var(--watch-t) var(--watch-e), box-shadow var(--watch-t) var(--watch-e), backdrop-filter var(--watch-t) var(--watch-e);
+}
+.hero-watch:hover {
+  transform: scale(.975);
+  box-shadow:
+    inset 0 .125em .125em rgba(0, 0, 0, .05),
+    inset 0 -.125em .125em rgba(255, 255, 255, .15),
+    0 .15em .05em -.1em rgba(0, 0, 0, .35),
+    inset 0 0 .05em .1em rgba(255, 255, 255, .15);
+  -webkit-backdrop-filter: blur(.01em);
+  backdrop-filter: blur(.01em);
+}
+.hero-watch::after {                         /* обводка: поворачивающиеся тени на белом контуре */
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: calc(var(--border-width) / -2);
+  left: calc(var(--border-width) / -2);
+  width: calc(100% + var(--border-width));
+  height: calc(100% + var(--border-width));
+  box-sizing: border-box;
+  padding: var(--border-width);
+  border-radius: 999px;
+  background:
+    conic-gradient(from var(--watch-angle-1) at 50% 50%, rgba(0, 0, 0, .5), rgba(0, 0, 0, 0) 5% 40%, rgba(0, 0, 0, .5) 50%, rgba(0, 0, 0, 0) 60% 95%, rgba(0, 0, 0, .5)),
+    linear-gradient(180deg, rgba(255, 255, 255, .25), rgba(255, 255, 255, .25));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+  transition: --watch-angle-1 500ms ease;
+}
+.hero-watch:hover::after { --watch-angle-1: -125deg; }
+.hero-watch:active::after { --watch-angle-1: -75deg; }
+.hero-watch-in { position: relative; display: flex; flex: 1; align-items: center; justify-content: center; gap: 12px; box-sizing: border-box; min-height: 54px; padding: 14px 24px; border-radius: inherit; text-shadow: 0 .125em .05em rgba(0, 0, 0, .25); transition: text-shadow var(--watch-t) var(--watch-e); }
+.hero-watch:hover .hero-watch-in { text-shadow: .025em .025em .025em rgba(0, 0, 0, .3); }
+.hero-watch-in::after {                      /* блик */
+  content: "";
+  position: absolute;
+  z-index: 3;
+  top: calc(var(--border-width) / 2);
+  left: calc(var(--border-width) / 2);
+  width: calc(100% - var(--border-width));
+  height: calc(100% - var(--border-width));
+  border-radius: inherit;
+  background: linear-gradient(var(--watch-angle-2), rgba(255, 255, 255, 0) 25%, rgba(255, 255, 255, .05) 33%, rgba(255, 255, 255, .17) 40%, rgba(255, 255, 255, .25) 45%, rgba(255, 255, 255, .17) 50%, rgba(255, 255, 255, .05) 57%, rgba(255, 255, 255, 0) 65%) 0% 50% / 200% 200% no-repeat;   /* мягкие края: промежуточные точки вместо резкого спада */
+  mix-blend-mode: screen;
+  pointer-events: none;
+  transition: background-position 500ms var(--watch-e), --watch-angle-2 500ms var(--watch-e);
+}
+.hero-watch:hover .hero-watch-in::after { background-position: 25% 50%; }
+.hero-watch:active .hero-watch-in::after { background-position: 50% 15%; --watch-angle-2: -15deg; }
+.watch-wrap:has(.hero-watch:hover) .watch-shadow { filter: blur(clamp(2px, .0625em, 6px)); }
+.watch-wrap:has(.hero-watch:hover) .watch-shadow::after { top: calc(var(--cut) - .875em); }
+.watch-wrap:has(.hero-watch:active) { transform: rotate3d(1, 0, 0, 25deg); }
+.watch-wrap:has(.hero-watch:active) .watch-shadow::after { top: calc(var(--cut) - .5em); opacity: .75; }
+.watch-wrap:has(.hero-watch:active) .hero-watch { box-shadow: inset 0 .125em .125em rgba(0, 0, 0, .05), inset 0 -.125em .125em rgba(255, 255, 255, .15), 0 .125em .125em -.125em rgba(0, 0, 0, .3), inset 0 0 .1em .25em rgba(255, 255, 255, .06), 0 .25em 0 0 rgba(255, 255, 255, .175), inset 0 .25em .05em 0 rgba(0, 0, 0, .2); }
+@media (hover: none) and (pointer: coarse) {
+  .hero-watch::after, .hero-watch:hover::after, .hero-watch:active::after { --watch-angle-1: -75deg; }
+  .hero-watch-in::after, .hero-watch:active .hero-watch-in::after { --watch-angle-2: -45deg; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .watch-wrap, .hero-watch, .hero-watch::after, .hero-watch-in, .hero-watch-in::after, .watch-shadow::after { transition: none; }
+  .watch-wrap:has(.hero-watch:active) { transform: none; }
+}
+@media (width <= 850px) { .watch-wrap { width: 100%; } }
+
+/* «Оставить потребность» — то же стекло, что у «Смотреть видео»; луч и ореол (.beam-button) остаются.
+   Псевдоэлементы кнопки заняты лучом, поэтому обводка и блик стекла — отдельными span */
+.button.beam-button {
+  --border-width: clamp(1px, .0625em, 4px);
+  border-color: transparent;
+  box-shadow:
+    inset 0 .125em .125em rgba(0, 0, 0, .05),
+    inset 0 -.125em .125em rgba(255, 255, 255, .15),
+    0 .25em .125em -.125em rgba(0, 0, 0, .3),
+    inset 0 0 .1em .25em rgba(255, 255, 255, .06);
+  transition: transform var(--watch-t) var(--watch-e), box-shadow var(--watch-t) var(--watch-e);
+}
+.button.beam-button:hover:not(:disabled) {
+  transform: scale(.975);
+  box-shadow:
+    inset 0 .125em .125em rgba(0, 0, 0, .05),
+    inset 0 -.125em .125em rgba(255, 255, 255, .15),
+    0 .15em .05em -.1em rgba(0, 0, 0, .35),
+    inset 0 0 .05em .1em rgba(255, 255, 255, .15);
+}
+.button.beam-button::before {
+  background:
+    conic-gradient(from var(--beam-angle), transparent 0% 50%, rgba(125, 255, 214, .08) 68%, transparent 86% 100%),
+    linear-gradient(-75deg, rgba(255, 255, 255, .025), rgba(255, 255, 255, .1), rgba(255, 255, 255, .025)),
+    rgba(20, 22, 25, .28);   /* тёмная заливка: ореол не перебивает текст, когда проходит за ним */
+  -webkit-backdrop-filter: blur(clamp(1px, .125em, 4px));
+  backdrop-filter: blur(clamp(1px, .125em, 4px));
+}
+.glass-rim {
+  position: absolute;
+  inset: -1px;
+  box-sizing: border-box;
+  padding: var(--border-width);
+  border-radius: inherit;
+  background:
+    conic-gradient(from var(--watch-angle-1) at 50% 50%, rgba(0, 0, 0, .5), rgba(0, 0, 0, 0) 5% 40%, rgba(0, 0, 0, .5) 50%, rgba(0, 0, 0, 0) 60% 95%, rgba(0, 0, 0, .5)),
+    linear-gradient(180deg, rgba(255, 255, 255, .25), rgba(255, 255, 255, .25));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+  transition: --watch-angle-1 500ms ease;
+}
+.beam-button:hover .glass-rim { --watch-angle-1: -125deg; }
+.beam-button:active .glass-rim { --watch-angle-1: -75deg; }
+.glass-shine {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(var(--watch-angle-2), rgba(255, 255, 255, 0) 25%, rgba(255, 255, 255, .05) 33%, rgba(255, 255, 255, .17) 40%, rgba(255, 255, 255, .25) 45%, rgba(255, 255, 255, .17) 50%, rgba(255, 255, 255, .05) 57%, rgba(255, 255, 255, 0) 65%) 0% 50% / 200% 200% no-repeat;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  transition: background-position 500ms var(--watch-e), --watch-angle-2 500ms var(--watch-e);
+}
+.beam-button:hover .glass-shine { background-position: 25% 50%; }
+.beam-button:active .glass-shine { background-position: 50% 15%; --watch-angle-2: -15deg; }
+.watch-wrap:has(.beam-button:hover) .watch-shadow { filter: blur(clamp(2px, .0625em, 6px)); }
+.watch-wrap:has(.beam-button:hover) .watch-shadow::after { top: calc(var(--cut) - .875em); }
+.watch-wrap:has(.beam-button:active) { transform: rotate3d(1, 0, 0, 25deg); }
+.watch-wrap:has(.beam-button:active) .watch-shadow::after { top: calc(var(--cut) - .5em); opacity: .75; }
+.methods-cta .watch-wrap .button { flex: 1; }
+@media (hover: none) and (pointer: coarse) {
+  .glass-rim, .beam-button:hover .glass-rim, .beam-button:active .glass-rim { --watch-angle-1: -75deg; }
+  .glass-shine, .beam-button:active .glass-shine { --watch-angle-2: -45deg; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .button.beam-button, .glass-rim, .glass-shine { transition: none; }
+  .watch-wrap:has(.beam-button:active) { transform: none; }
+}
+
+/* «Зарегистрироваться» на первом экране — то же стекло, что у «Смотреть видео», цвет кнопки прежний */
+.hero .hero-cta {
+  --border-width: clamp(1px, .0625em, 4px);
+  position: relative;
+  flex: 1;
+  box-shadow:
+    inset 0 0 14px 1px rgba(255, 255, 255, .45),   /* белая внутренняя тень с размывкой */
+    0 .25em .125em -.125em rgba(0, 0, 0, .3);
+  text-shadow: 0 .125em .375em rgba(0, 0, 0, .3);
+  transition: background .16s, transform var(--watch-t) var(--watch-e), box-shadow var(--watch-t) var(--watch-e), text-shadow var(--watch-t) var(--watch-e);
+}
+.hero .hero-cta:hover:not(:disabled) {
+  transform: scale(.975);
+  text-decoration: none;
+  text-shadow: .025em .025em .25em rgba(0, 0, 0, .3);
+  box-shadow:
+    inset 0 0 18px 2px rgba(255, 255, 255, .6),
+    0 .15em .05em -.1em rgba(0, 0, 0, .35);
+}
+.hero-cta .glass-rim { inset: 0; }
+.hero-cta:hover .glass-rim { --watch-angle-1: -125deg; }
+.hero-cta:active .glass-rim { --watch-angle-1: -75deg; }
+.hero-cta:hover .glass-shine { background-position: 25% 50%; }
+.hero-cta:active .glass-shine { background-position: 50% 15%; --watch-angle-2: -15deg; }
+.watch-wrap:has(.hero-cta:hover) .watch-shadow { filter: blur(clamp(2px, .0625em, 6px)); }
+.watch-wrap:has(.hero-cta:hover) .watch-shadow::after { top: calc(var(--cut) - .875em); }
+.watch-wrap:has(.hero-cta:active) { transform: rotate3d(1, 0, 0, 25deg); }
+.watch-wrap:has(.hero-cta:active) .watch-shadow::after { top: calc(var(--cut) - .5em); opacity: .75; }
+@media (hover: none) and (pointer: coarse) {
+  .hero-cta:hover .glass-rim, .hero-cta:active .glass-rim { --watch-angle-1: -75deg; }
+  .hero-cta:active .glass-shine { --watch-angle-2: -45deg; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero .hero-cta { transition: none; }
+  .watch-wrap:has(.hero-cta:active) { transform: none; }
+}
+
+/* «Возможность бесплатной замены» и карточки отраслей — палитра карточек «Подойдёт ли решение» */
+.replacement-section, .ex-media {
+  --ink: #0a162b;
+  --fit-accent: #a9d7f9;
+  --fit-ring: 0 0 0 2px var(--fit-accent), 0 0 14px rgba(169, 215, 249, .4);
+}
+.replacement-section {
+  border: 1px solid rgba(255, 255, 255, .75);
+  background:
+    radial-gradient(60% 90% at 0% 45%, #a7dce5, transparent 72%),
+    radial-gradient(60% 90% at 100% 100%, #d2f4a0, transparent 72%),
+    radial-gradient(50% 70% at 100% 0%, #bef5e2, transparent 72%),
+    #e8f7f2;
+}
+.replacement-section h2 { color: var(--ink); }
+.replacement-section p:not(.eyebrow) { color: rgba(10, 22, 43, .5); }
+.ex-card:nth-child(odd) .ex-media {
+  background:
+    radial-gradient(75% 80% at 0% 45%, #a7dce5, transparent 72%),
+    radial-gradient(75% 75% at 100% 100%, #d2f4a0, transparent 72%),
+    radial-gradient(60% 60% at 100% 0%, #bef5e2, transparent 72%),
+    #e8f7f2;
+}
+.ex-card:nth-child(even) .ex-media {
+  background:
+    radial-gradient(75% 80% at 100% 40%, #a7dce5, transparent 72%),
+    radial-gradient(75% 75% at 0% 100%, #d2f4a0, transparent 72%),
+    radial-gradient(60% 60% at 0% 0%, #bef5e2, transparent 72%),
+    #e8f7f2;
+}
+.rep-visual .cs-glass, .ex-chips .cs-glass {
+  color: rgba(10, 22, 43, .75);
+  background: rgba(255, 255, 255, .55);
+  border-color: rgba(255, 255, 255, .85);
+  box-shadow: 0 2px 10px rgba(169, 215, 249, .12), inset 0 0 6px rgba(255, 255, 255, .7);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.rep-visual .cs-row.is-current .cs-line { color: var(--ink); background: rgba(255, 255, 255, .8); box-shadow: var(--fit-ring); }
+.rep-visual .cs-row.is-current .cs-icon { color: var(--fit-accent); }
