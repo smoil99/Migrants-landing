@@ -2767,3 +2767,18 @@ div.bf-drop .bf-drop-btn { display: flex; flex-direction: column; align-items: c
   top: calc(var(--cut) - .5em);
   opacity: 1;
 }
+
+/* Hover как у «Смотреть видео», без внутреннего свечения. */
+@media (hover: hover) and (pointer: fine) {
+  #uncertainty .beam-button:hover:not(:disabled) {
+    transform: scale(.975);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, .1);
+    text-shadow: .025em .025em .025em rgba(0, 0, 0, .3);
+  }
+  #uncertainty .watch-wrap:has(.beam-button:hover) .watch-shadow::after {
+    top: calc(var(--cut) - .875em);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #uncertainty .beam-button:hover:not(:disabled) { transform: none; }
+}
