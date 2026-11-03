@@ -2751,3 +2751,19 @@ div.bf-drop .bf-drop-btn { display: flex; flex-direction: column; align-items: c
   #uncertainty { padding-block: 20px; }
   #uncertainty::before { background-size: auto 190%; }
 }
+
+/* Анимация CTA только по контуру: без ореола и блика внутри. */
+#uncertainty .beam-button::before { background: rgba(20, 22, 25, .28); }
+#uncertainty .beam-halo,
+#uncertainty .glass-shine { display: none; }
+#uncertainty .beam-button,
+#uncertainty .beam-button:hover:not(:disabled) {
+  transform: none;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .1);
+}
+#uncertainty .watch-wrap:has(.beam-button:active) { transform: none; }
+#uncertainty .watch-wrap:has(.beam-button:hover) .watch-shadow::after,
+#uncertainty .watch-wrap:has(.beam-button:active) .watch-shadow::after {
+  top: calc(var(--cut) - .5em);
+  opacity: 1;
+}
