@@ -16,8 +16,6 @@
   const INDIA = [77.21, 28.61], RUSSIA = [37.62, 55.75];
   const CITIES = [[72.88, 19.08], [77.59, 12.97], [88.36, 22.57], [80.27, 13.08], [78.49, 17.39], [77.21, 28.61]];
   const steps = [...section.querySelectorAll('.roles-step')];
-  const dots = [...section.querySelectorAll('.roles-dots i')];
-  const caption = section.querySelector('[data-roles-caption]');
   const ctx = canvas.getContext('2d');
   const arc = d3.geoInterpolate(INDIA, RUSSIA);
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -40,8 +38,6 @@
     if (i === active) return;
     active = i;
     steps.forEach((s, k) => s.classList.toggle('is-active', k === i));
-    dots.forEach((d, k) => d.classList.toggle('is-active', k === i));
-    caption.textContent = steps[i].querySelector('h3').textContent;
     from = { ...cur }; to = STATES[i]; t0 = performance.now(); label = to.label;
     if (reduceMotion) { cur = { ...to }; draw(); return; }
     start();

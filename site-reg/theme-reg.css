@@ -2782,3 +2782,51 @@ div.bf-drop .bf-drop-btn { display: flex; flex-direction: column; align-items: c
 @media (prefers-reduced-motion: reduce) {
   #uncertainty .beam-button:hover:not(:disabled) { transform: none; }
 }
+
+/* Меню на телефоне и планшете: выпадает сверху вниз и проявляется, пункты появляются друг за другом.
+   Закрытое меню остаётся в разметке, но скрыто (visibility) — с клавиатуры и для скринридера недоступно */
+@media (width <= 1100px) {
+  .site-header .nav {
+    display: flex; flex-direction: column; gap: 0; padding: 12px 24px;
+    position: absolute; top: 100%; left: 0; right: 0;
+    background: #fff; box-shadow: 0 12px 20px #1a302a15;
+    visibility: hidden; opacity: 0; translate: 0 -8px; clip-path: inset(0 0 100% 0); pointer-events: none;
+    transition: opacity .25s ease, translate .35s cubic-bezier(.2, .8, .2, 1), clip-path .35s cubic-bezier(.2, .8, .2, 1), visibility 0s linear .35s;
+  }
+  .site-header .nav:not(.mobile-open) { display: flex; }   /* из display: none анимация не запускается — прячем через visibility */
+  .site-header .nav.mobile-open {
+    visibility: visible; opacity: 1; translate: 0 0; clip-path: inset(0 0 -40px 0); pointer-events: auto;
+    transition-delay: 0s;
+  }
+  .site-header .nav a { padding: 12px 0; font-size: .9375rem; opacity: 0; translate: 0 -6px; transition: opacity .2s ease, translate .25s ease, color .3s; }
+  .site-header .nav.mobile-open a { opacity: 1; translate: 0 0; transition-delay: calc(80ms + var(--i, 0) * 35ms), calc(80ms + var(--i, 0) * 35ms), 0s; }
+}
+@media (width <= 1100px) and (prefers-reduced-motion: reduce) {
+  .site-header .nav, .site-header .nav a { transition: none; translate: none; }
+}
+
+/* «Не уверены в способе?»: поля вокруг контента — как у остальных плашек (40 px, на телефоне 24 px) */
+#uncertainty { padding: 40px; }
+@media (width <= 580px) { #uncertainty { padding: 24px; } }
+
+/* Кнопка «Наверх» в подвале — шеврон */
+.back-top svg { display: block; }
+
+/* Кнопка меню: три полоски превращаются в крестик, пока меню открыто (aria-expanded ставит script.js) */
+.menu-bars { position: relative; display: block; width: 20px; height: 14px; margin: 0 auto; }
+.menu-bars i { position: absolute; left: 0; width: 100%; height: 2px; background: currentColor; border-radius: 2px; transition: top .25s ease .15s, rotate .25s ease, opacity .15s ease .1s; }
+.menu-bars i:nth-child(1) { top: 0; }
+.menu-bars i:nth-child(2) { top: 6px; }
+.menu-bars i:nth-child(3) { top: 12px; }
+.menu-button[aria-expanded="true"] .menu-bars i { transition: top .25s ease, rotate .25s ease .15s, opacity .15s ease; }
+.menu-button[aria-expanded="true"] .menu-bars i:nth-child(1) { top: 6px; rotate: 45deg; }
+.menu-button[aria-expanded="true"] .menu-bars i:nth-child(2) { opacity: 0; }
+.menu-button[aria-expanded="true"] .menu-bars i:nth-child(3) { top: 6px; rotate: -45deg; }
+@media (prefers-reduced-motion: reduce) { .menu-bars i, .menu-button[aria-expanded="true"] .menu-bars i { transition: none; } }
+
+/* Шапка при загрузке страницы: без переходов, пока header.js не определил, что под ней */
+.site-header.is-booting, .site-header.is-booting * { transition: none !important; }
+
+/* Заголовок первого экрана: когда «для предприятий:» стоит отдельной строкой, перенос <br> после неё давал
+   на планшете пустую строку перед «от подбора до адаптации» */
+@media (width > 580px) { .hero h1 .h1-line + br { display: none; } }

@@ -2,6 +2,8 @@
   Шапка-стекло: подстраивает тон под то, что под ней.
   Над тёмными участками — класс .is-dark (белый текст), над светлыми — без него.
   Над первым экраном — ещё и .is-over-hero (прозрачная, без обводки).
+  В разметке шапка сразу с этими классами: страница открывается на первом экране, и до загрузки скрипта
+  шапка уже прозрачная — без белой вспышки.
 */
 (() => {
   const header = document.querySelector('.site-header');
@@ -24,4 +26,6 @@
   addEventListener('scroll', schedule, { passive: true });
   addEventListener('resize', schedule);
   update();
+  // до первого расчёта шапка без переходов: иначе при открытии мелькал белый фон (см. .is-booting)
+  requestAnimationFrame(() => requestAnimationFrame(() => header.classList.remove('is-booting')));
 })();

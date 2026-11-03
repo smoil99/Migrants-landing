@@ -114,9 +114,12 @@ function setVariant(variant, updateUrl = true) {
 
 /* ——— Мобильное меню ——— */
 
+$$('.nav a').forEach((link, i) => link.style.setProperty('--i', i));   // порядок пунктов — для поочерёдного появления
+
 function setMenu(open) {
   $('.nav').classList.toggle('mobile-open', open);
   $('.menu-button').setAttribute('aria-expanded', String(open));
+  $('.menu-button').setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
 }
 
 /* ——— Вкладки, шаги, отрасли ——— */
@@ -291,6 +294,14 @@ document.addEventListener('click', event => {
   if (industry) return selectIndustry(industry);
   if (topic && el.closest('.faq-filters')) return filterFaq(topic);
   if (el.matches('.faq-item h3 button')) { keepInPlace(el); return toggleFaq(faqItems().indexOf(el.closest('.faq-item'))); }
+  // «Наверх» и логотип: первый экран закреплён (sticky), поэтому якорь #top не прокручивал страницу к началу
+  if (el.matches('a[href="#top"]')) {
+    event.preventDefault();
+    setMenu(false);
+    scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    history.replaceState(null, '', location.pathname + location.search);
+    return;
+  }
   if (el.matches('.menu-button')) return setMenu(!$('.nav').classList.contains('mobile-open'));
   if (el.closest('.nav')) return setMenu(false);
 });
