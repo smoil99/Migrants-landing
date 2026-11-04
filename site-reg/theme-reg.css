@@ -1173,7 +1173,7 @@ footer { color: rgba(255, 255, 255, .6); background: #181818; border-radius: 64p
 
 /* «Люди и навыки…»: тот же фон, что у десктопной плашки «5 шагов» (flow-bg.webp: тёмный слева, зелёный справа и снизу) */
 /* Подложка блока; затемнение слева — чтобы заголовок и текст читались на ярком зелёном */
-.why-section { background: linear-gradient(90deg, rgba(13, 15, 17, .72) 0%, rgba(13, 15, 17, .5) 45%, rgba(13, 15, 17, .05) 75%), #1b1c1f url(features/why-bg-wave.webp) center / cover no-repeat; }
+.why-section { background: #1b1c1f url(features/why-bg-rings.webp) left center / cover no-repeat; }
 .why-item { background: rgba(20, 22, 25, .6); border-color: rgba(255, 255, 255, .14); }  /* тёмное стекло — текст читается и над зелёным */
 
 /* Плитка с готовой SVG-иллюстрацией (подложка, свечение и скругление уже внутри картинки) */
@@ -1468,11 +1468,11 @@ main { overflow-x: clip; }              /* лента слайдера выхо�
   -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, .6) 35%, transparent 70%);
   mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, .6) 35%, transparent 70%);
 }
-.ex-card:nth-child(1) .ex-media { --ex-photo: url(examples/construction.webp); }
-.ex-card:nth-child(2) .ex-media { --ex-photo: url(examples/production.webp); }
-.ex-card:nth-child(3) .ex-media { --ex-photo: url(examples/agriculture.webp); }
-.ex-card:nth-child(4) .ex-media { --ex-photo: url(examples/logistics.webp); }
-.ex-card:nth-child(5) .ex-media { --ex-photo: url(examples/utilities.webp); }
+.ex-card:nth-child(1) .ex-media { --ex-photo: url(examples/construction-v3.webp); }
+.ex-card:nth-child(2) .ex-media { --ex-photo: url(examples/production-v3.webp); }
+.ex-card:nth-child(3) .ex-media { --ex-photo: url(examples/agriculture-v3.webp); }
+.ex-card:nth-child(4) .ex-media { --ex-photo: url(examples/logistics-v3.webp); }
+.ex-card:nth-child(5) .ex-media { --ex-photo: url(examples/utilities-v3.webp); }
 
 /* ——— «Четыре способа привлечения» — в стиле «Люди и навыки…» ———
    Тёмная скруглённая плашка с фоном flow-bg.webp, светлый текст. Карточки — тёмное стекло,
@@ -2830,3 +2830,117 @@ div.bf-drop .bf-drop-btn { display: flex; flex-direction: column; align-items: c
 /* Заголовок первого экрана: когда «для предприятий:» стоит отдельной строкой, перенос <br> после неё давал
    на планшете пустую строку перед «от подбора до адаптации» */
 @media (width > 580px) { .hero h1 .h1-line + br { display: none; } }
+
+/* Рифлёное стекло из вертикальных полос (fluted-glass.js) — по статье fullstack.rocks
+   «Fluted Glass with React and Styled Components»: «Почему Индия», «Способы привлечения»,
+   «Не уверены в способе?». Скрипт задаёт полосам фон и сдвиг, CSS — раскладку и поворот в 3D.
+   Пока картинка не загрузилась, виден обычный фон блока. */
+#why, #methods { position: relative; isolation: isolate; }
+.fluted-glass {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  display: flex;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  /* полосы с 3D-поворотом выходят из-под скругления; маска заставляет браузер резать по радиусу */
+  -webkit-mask-image: radial-gradient(#000, #000);
+  mask-image: radial-gradient(#000, #000);
+}
+.fluted-glass i {
+  position: relative;
+  top: -10%;
+  flex: 1 0 auto;
+  height: 120%;
+  background-repeat: no-repeat;
+  transform: perspective(200px) rotateY(12deg);
+}
+
+/* «Почему Индия»: заголовок целиком белый, без акцентного слова */
+.why-grid h2 span { color: inherit; }
+
+/* «Почему Индия»: подложка карточек слабее, чтобы сквозь неё было видно стекло фона */
+#why .why-item { background: rgba(20, 22, 25, .35); }
+#why .text-button { color: #fff; }
+
+/* «Почему Индия»: фон why-bg-rings.webp (кольца, размыты заранее, как в футере). Кадр без увеличения,
+   по левому краю: слева под текстом тёмная зона, в центре и справа под карточками кольца и зелёный.
+   Переменные читает fluted-glass.js; background — запасной фон до загрузки. */
+#why .fluted-glass { --fluted-zoom: 1; --fluted-x: 0; --fluted-y: .5; }
+
+
+/* «5 шагов», десктоп: то же рифлёное стекло на фоне плашки (fluted-glass.js). На ≤1024px плашки нет — слайдер. */
+@media (width > 1024px) { .flow-demo { position: relative; isolation: isolate; } }
+@media (width <= 1024px) { .flow-demo > .fluted-glass { display: none; } }
+
+/* Футер: зелёный фон footer-bg-blur.webp (размыт заранее) под рифлёным стеклом (fluted-glass.js); background — запасной до загрузки */
+footer { position: relative; isolation: isolate; background: #1f8f4e url(features/footer-bg-blur.webp) center / cover no-repeat; }
+/* текст футера на ярком зелёном: плотнее белый и лёгкая тень для читаемости */
+footer, footer p, footer small, footer .footer-bottom span, footer .footer-bottom a, footer .legal-grid a { color: rgba(255, 255, 255, .92); }
+footer .brand-caption { color: rgba(255, 255, 255, .8); }
+footer .container { text-shadow: 0 1px 2px rgba(0, 0, 0, .22); }
+footer .footer-top, footer .footer-bottom { border-color: rgba(255, 255, 255, .3); }
+/* затемнение поверх стекла футера: ровные 40% */
+footer .fluted-glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 22, 14, .4);
+}
+
+/* «Профессии»: без нижнего поля — дальше плашка «Не уверены…» со своим отступом сверху, затем FAQ */
+#examples { padding-bottom: 0; }
+
+/* «Зарегистрироваться» на первом экране: без размытой белой подсветки по краям;
+   у стрелки та же тень, что у текста (text-shadow на SVG не действует — drop-shadow) */
+.hero .hero-cta { box-shadow: 0 .25em .125em -.125em rgba(0, 0, 0, .3); }
+.hero .hero-cta:hover:not(:disabled) { box-shadow: 0 .15em .05em -.1em rgba(0, 0, 0, .35); }
+.hero .hero-cta .arrow-icon { filter: drop-shadow(0 .125em .375em rgba(0, 0, 0, .3)); transition: filter var(--watch-t) var(--watch-e); }
+.hero .hero-cta:hover:not(:disabled) .arrow-icon { filter: drop-shadow(.025em .025em .25em rgba(0, 0, 0, .3)); }
+
+/* «Зарегистрироваться» на первом экране: без стекла — без обводки, блика, тени-подложки и 3D-наклона;
+   остаются цвет кнопки, ховер-цвет и тень текста/стрелки. При наведении — уменьшение, как у «Смотреть видео»,
+   и белая внутренняя тень */
+.hero .hero-cta .glass-rim,
+.hero .hero-cta .glass-shine,
+.watch-wrap:has(.hero-cta) .watch-shadow { display: none; }
+.hero .hero-cta { box-shadow: inset 0 0 0 0 rgba(255, 255, 255, 0); transform: none; }
+.hero .hero-cta:hover:not(:disabled) { box-shadow: inset 0 0 18px 2px rgba(255, 255, 255, .6); transform: scale(.975); }
+.watch-wrap:has(.hero-cta:active) { transform: none; }
+
+/* «Наверх» в футере — круглая */
+footer .back-top { border-radius: 50%; }
+
+/* «Не уверены, с чего начать?»: фон cta-bg-rings-blur36.webp — присланные кольца с дополнительным размытием (тёмный слева под текстом, зелёные кольца справа).
+   ::before — запасной фон до загрузки стекла, без прежнего зеркала и растяжения */
+#uncertainty::before { background: url(features/cta-bg-rings-blur36.webp) center / cover no-repeat; transform: none; }
+
+/* «Возможность бесплатной замены»: подробная анимация каждой строки (script.js задаёт is-start / is-done):
+   0 мс — всплывает плашка значка; 60 мс — выезжает плашка текста; 125 мс — рисуется знак;
+   225 мс — печатается текст с курсором. Когда текущая строка набрана — загорается её обводка и значок */
+.rep-visual .cs-line { gap: 0; }
+.rep-visual.is-ready .cs-icon,
+.rep-visual.is-ready .cs-line { opacity: 0; }
+.rep-visual .cs-row.is-start .cs-icon { animation: cs-person-in .225s cubic-bezier(.3, 1.4, .5, 1) both; }
+.rep-visual .cs-row.is-start .cs-line { animation: rep-line-in .25s cubic-bezier(.2, .8, .2, 1) .06s both; }
+.rep-visual.is-ready path { stroke-dasharray: 1 2; stroke-dashoffset: 1.02; }
+.rep-visual .cs-row.is-start path { animation: cs-draw .2s ease .125s forwards; }
+.rep-visual.is-ready .cs-row.is-current:not(.is-done) .cs-line { color: rgba(10, 22, 43, .75); background: rgba(255, 255, 255, .55); box-shadow: 0 2px 10px rgba(169, 215, 249, .12), inset 0 0 6px rgba(255, 255, 255, .7); }
+.rep-visual.is-ready .cs-row.is-current:not(.is-done) .cs-icon { color: inherit; }
+.rep-visual .cs-row.is-current .cs-line,
+.rep-visual .cs-row.is-current .cs-icon { transition: box-shadow .2s, color .2s, background .2s; }
+.rep-visual .cs-row.is-current.is-done .cs-line { animation: rep-line-in .25s cubic-bezier(.2, .8, .2, 1) .06s both, rep-glow .3s ease both; }
+@keyframes rep-line-in { from { opacity: 0; translate: -20px 0; clip-path: inset(-24px 100% -24px -24px); } to { opacity: 1; translate: 0 0; clip-path: inset(-24px -24px -24px -24px); } }   /* запас -24px — чтобы не срезать обводку текущей строки */
+@keyframes rep-glow { 0% { scale: 1; } 40% { scale: 1.03; } 100% { scale: 1; } }
+@media (width <= 580px) { .rep-visual .cs-typed, .rep-visual .cs-rest { white-space: normal; } }
+
+/* «Возможность бесплатной замены»: плашка значка текущей строки — с той же голубой обводкой, что у плашки текста */
+.rep-visual .cs-row.is-current .cs-icon { background: rgba(255, 255, 255, .8); box-shadow: var(--fit-ring); }
+.rep-visual.is-ready .cs-row.is-current:not(.is-done) .cs-icon { background: rgba(255, 255, 255, .55); box-shadow: 0 2px 10px rgba(169, 215, 249, .12), inset 0 0 6px rgba(255, 255, 255, .7); }
+
+/* Примечание под «5 шагами» — той же ширины, что примечание под «Способами привлечения» */
+.flow-timing { max-width: 950px; }
+/* значок текущей строки — насыщенный синий (как ссылки в палитре), чтобы не сливался с голубой обводкой */
+.rep-visual .cs-row.is-current .cs-icon { color: #279bf0; }
+.rep-visual.is-ready .cs-row.is-current:not(.is-done) .cs-icon { color: inherit; }

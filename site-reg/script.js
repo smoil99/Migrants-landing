@@ -428,7 +428,7 @@ const ART_END = 2000;   // все три иллюстрации «Подойдё
   chips.forEach((chip, i) => chip.style.setProperty('--d', `${Math.round(250 + i / (chips.length - 1) * (ART_END - 250 - 600))}ms`));
 
   // Текст строки делится на набранную и ещё скрытую части: скрытая держит ширину, поэтому при наборе ничего не сдвигается
-  const lines = $$('.cs-art-rows .cs-row').map(row => {
+  const prepareRows = rows => rows.map(row => {
     const line = $('.cs-line', row), text = line.textContent;
     line.innerHTML = '<span class="cs-typed"></span><span class="cs-rest"></span>';
     const [typed, rest] = line.children;
@@ -436,10 +436,11 @@ const ART_END = 2000;   // все три иллюстрации «Подойдё
     $$('path', row).forEach(path => path.setAttribute('pathLength', 1));
     return { row, typed, rest, text };
   });
+  const cardLines = prepareRows($$('.cs-art-rows .cs-row'));
 
   // Расписание считается от общего времени: текст допечатывается за 300 мс до конца, и в эти 300 мс загорается акцент
-  function typeRows() {
-    const START = 100, ICON = 160, GAP = 40, last = ART_END - 300;
+  function typeRows(lines, total = ART_END, ICON = 160, GAP = 40) {
+    const START = 100, last = total - 300;
     const chars = lines.reduce((sum, { text }) => sum + text.length, 0);
     const perChar = (last - START - lines.length * ICON - (lines.length - 1) * GAP) / chars;
     let at = START;
@@ -469,7 +470,21 @@ const ART_END = 2000;   // все три иллюстрации «Подойдё
   const io = new IntersectionObserver(entries => entries.filter(e => e.isIntersecting).forEach(({ target }) => {
     io.unobserve(target);
     target.classList.add('is-on');
-    if ($('.cs-art-rows', target)) typeRows();
+    if ($('.cs-art-rows', target)) typeRows(cardLines);
   }), { threshold: .6 });
   arts.forEach(art => io.observe(art));
+
+  // «Возможность бесплатной замены»: тот же набор строк, что у «Что предстоит уточнить», но подробнее —
+  // в каждой строке по очереди появляется значок, выезжает плашка, рисуется знак и печатается текст (CSS ждёт 225 мс)
+  const rep = $('.rep-visual');
+  if (rep) {
+    const repLines = prepareRows($$('.cs-row', rep));
+    rep.classList.add('is-ready');
+    const repIo = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      repIo.disconnect();
+      typeRows(repLines, 2100, 225, 60);
+    }, { threshold: .6 });
+    repIo.observe(rep);
+  }
 })();
