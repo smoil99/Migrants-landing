@@ -2944,3 +2944,38 @@ footer .back-top { border-radius: 50%; }
 /* значок текущей строки — насыщенный синий (как ссылки в палитре), чтобы не сливался с голубой обводкой */
 .rep-visual .cs-row.is-current .cs-icon { color: #279bf0; }
 .rep-visual.is-ready .cs-row.is-current:not(.is-done) .cs-icon { color: inherit; }
+
+/* Логотип «Сбер × Работа.ру» в шапке и футере: Сбер первым, «×» — совместный проект; подпись «для бизнеса» — под Работа.ру.
+   Сбер — SVG с currentColor и классом .wordmark, поэтому меняет цвет вместе с логотипом Работа.ру */
+.brand.brand-duo {
+  display: inline-grid;
+  grid-template-columns: auto auto auto;
+  align-items: center;
+  column-gap: 10px;
+  row-gap: 0;
+}
+.brand-duo .brand-sber { grid-column: 1; grid-row: 1; height: 22px; }
+.brand-duo .brand-x { grid-column: 2; grid-row: 1; font-size: 15px; line-height: 1; font-weight: 400; color: currentColor; opacity: .55; }
+.brand-duo > svg:not(.brand-sber) { grid-column: 3; grid-row: 1; }
+.brand-duo .brand-caption { grid-column: 3; grid-row: 2; }
+.site-header .brand-duo .brand-x { color: var(--reg-gray-dark); opacity: 1; transition: color .3s; }
+.site-header.is-dark .brand-duo .brand-x { color: rgba(255, 255, 255, .6); }
+@media (width <= 850px) { .site-header .brand-duo .brand-sber { height: 19px; } .brand.brand-duo { column-gap: 8px; } }
+/* с двумя логотипами шапка шире: на узком десктопе пункты меню ближе друг к другу, чтобы всё влезло в одну строку */
+@media (1100px < width <= 1260px) { .site-header .nav:not(.mobile-open) { gap: 10px; } }
+
+/* Футер, десктоп: верхняя строка на тех же колонках, что реквизиты ниже — описание начинается
+   по левому краю колонки «Юридический адрес», кнопка «Наверх» справа */
+@media (width > 850px) {
+  .footer-top { display: grid; grid-template-columns: .9fr 1.15fr 1.3fr; column-gap: 50px; align-items: start; }
+  .footer-top .brand { grid-column: 1; grid-row: 1; }
+  .footer-top p { grid-column: 2 / 4; grid-row: 1; max-width: 640px; padding-right: 72px; }
+  .footer-top .back-top { grid-column: 3; grid-row: 1; justify-self: end; }
+}
+@media (850px < width <= 1150px) { .footer-top { column-gap: 30px; } }
+/* узкий десктоп: первая колонка уже ряда логотипов — логотипы в футере чуть меньше, чтобы не наезжали на описание */
+@media (850px < width <= 1000px) {
+  .footer-top .brand-duo { column-gap: 8px; }
+  .footer-top .brand-duo .brand-logo { height: 19px; }
+  .footer-top .brand-duo .brand-sber { height: 18px; }
+}
