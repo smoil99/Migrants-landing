@@ -174,10 +174,21 @@
     const w = ctx.measureText(text).width + 16;
     ctx.fillStyle = '#fff';
     ctx.shadowColor = 'rgba(25, 27, 30, .15)'; ctx.shadowBlur = 8; ctx.shadowOffsetY = 2;
-    ctx.beginPath(); ctx.roundRect(x + 12, y - 24, w, 24, 12); ctx.fill();
+    // На телефоне глобус узкий (220px), и метка справа от точки вылезала за край canvas:
+    // если справа не помещается — ставим слева от точки, и в любом случае держим в границах
+    const pad = 6;
+    let bx = x + 12, by = y - 24;
+    if (bx + w > size - pad) {
+      if (x - 12 - w >= pad) bx = x - 12 - w;              // слева от точки
+      else { bx = x - w / 2; by = y - 38; }                // ни справа, ни слева — над точкой
+    }
+    if (by < pad) by = y + 14;                             // у верхнего края — под точкой
+    bx = Math.max(pad, Math.min(bx, size - w - pad));
+    by = Math.min(by, size - 24 - pad);
+    ctx.beginPath(); ctx.roundRect(bx, by, w, 24, 12); ctx.fill();
     ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
     ctx.fillStyle = '#2b2f33';
-    ctx.fillText(text, x + 20, y - 8);
+    ctx.fillText(text, bx + 8, by + 16);
     ctx.globalAlpha = 1;
   }
 
