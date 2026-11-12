@@ -2979,3 +2979,10 @@ footer .back-top { border-radius: 50%; }
   .footer-top .brand-duo .brand-logo { height: 19px; }
   .footer-top .brand-duo .brand-sber { height: 18px; }
 }
+
+/* Логотипы поменяны местами: Работа.ру первым, затем «×» и Сбер.
+   Колонки по содержимому и прижаты влево — в футере блок растягивался на ширину колонки сетки,
+   и расстояния вокруг «×» были больше, чем в шапке; теперь в обоих местах — column-gap */
+.brand.brand-duo { grid-template-columns: repeat(3, max-content); justify-content: start; justify-self: start; }
+.brand-duo > svg:not(.brand-sber) { grid-column: 1; }
+.brand-duo .brand-sber { grid-column: 3; }
