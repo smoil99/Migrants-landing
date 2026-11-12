@@ -3119,3 +3119,19 @@ footer {
 }
 footer, footer p, footer small, footer .footer-bottom span, footer .footer-bottom a, footer .legal-grid a { color: rgba(10, 22, 43, .72); }
 footer .footer-top, footer .footer-bottom { border-color: rgba(10, 22, 43, .16); }
+
+/* «Не уверены, с чего начать?», планшет и телефон: блок узкий, и по центру картинки попадал яркий
+   бирюзовый участок. Кадр прижат к правому верхнему углу — там тёмно-синий, под текстом темно */
+@media (width <= 1024px) {
+  #uncertainty .fluted-glass { --fluted-x: 1; --fluted-y: 0; }
+  #uncertainty::before { background-position: right top; }
+}
+
+/* «Не уверены, с чего начать?», узкие экраны: порядок «текст → иллюстрация → кнопка».
+   Обёртка .contact-inner раскрывается (display: contents), и её дети встают в строки сетки блока */
+@media (width <= 760px) {
+  #uncertainty .contact-inner { display: contents; }
+  #uncertainty .contact-inner > div:first-child { grid-row: 1; position: relative; }
+  #uncertainty .methods-cta-art { grid-row: 2; margin-block: -4px; }
+  #uncertainty .cta-buttons { grid-row: 3; position: relative; }
+}
