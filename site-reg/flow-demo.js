@@ -28,6 +28,7 @@
 
   const tabs = [...root.querySelectorAll('[data-flow-tab]')];
   const stage = root.querySelector('.flow-window');
+  const timeline = root.querySelector('[data-flow-timeline]');   // общий таймлайн 5 этапов под окном (десктоп)
   const slidesBox = root.querySelector('[data-flow-slides]');
   const prevBtn = root.querySelector('[data-flow-prev]');
   const nextBtn = root.querySelector('[data-flow-next]');
@@ -525,6 +526,7 @@
     return { slide, demo: createDemo(win) };
   });
 
+  if (timeline) stage.append(timeline);   // таймлайн — внутрь окна, по его нижнему краю (после клонирования окна в слайдер)
   const main = createDemo(stage);
   let current = 0;      // активная вкладка (десктоп)
   let active = 0;       // активная карточка (слайдер)
@@ -541,6 +543,19 @@
       if (on && focus) tab.focus();
     });
     stage.setAttribute('aria-labelledby', tabs[index].id);
+    setTimeline(index, index + 1);
+  }
+
+  // Таймлайн: заливка от начала текущего этапа до его конца за время этапа (transition из JS); без времени — сразу до конца этапа
+  function setTimeline(from, to, ms = 0) {
+    const bar = timeline?.firstElementChild;
+    if (!bar) return;
+    bar.style.transition = 'none';
+    bar.style.transform = `scaleX(${(ms ? from : to) / tabs.length})`;
+    if (!ms || reduceMotion) { bar.style.transform = `scaleX(${to / tabs.length})`; return; }
+    void bar.offsetWidth;               // зафиксировать начало, чтобы transition пошёл от него
+    bar.style.transition = `transform ${ms}ms linear`;
+    bar.style.transform = `scaleX(${to / tabs.length})`;
   }
 
   function playTab(index, continued = false) {
@@ -551,7 +566,16 @@
     tab.style.setProperty('--flow-dur', `${ms}ms`);
     void tab.offsetWidth;               // перезапуск анимации полосы прогресса
     tab.classList.add('is-playing');
+
+    setTimeline(index, index + 1, ms);
   }
+
+  // Клик по таймлайну — переход к этапу под курсором
+  timeline?.addEventListener('click', event => {
+    const box = timeline.getBoundingClientRect();
+    const n = Math.min(tabs.length - 1, Math.max(0, Math.floor((event.clientX - box.left) / box.width * tabs.length)));
+    if (visible) playTab(n); else selectTab(n);
+  });
 
   tabs.forEach((tab, i) => tab.addEventListener('click', () => { if (visible) playTab(i); else selectTab(i); }));
   root.querySelector('.flow-tabs').addEventListener('keydown', event => {

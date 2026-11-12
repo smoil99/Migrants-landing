@@ -8,7 +8,7 @@
 (() => {
   const header = document.querySelector('.site-header');
   if (!header) return;
-  const DARK = '.hero, .services-section, .contact-section, .flow-demo, .features-section, .methods-cta, .why-section, .methods-section, footer';
+  const DARK = '.hero, .services-section, .contact-section, .flow-demo, .features-section, .methods-cta, .why-section, .methods-section';   // футер светлый — шапка над ним обычная
   let queued = false;
 
   function update() {
