@@ -3186,3 +3186,8 @@ footer .footer-top, footer .footer-bottom { border-color: rgba(10, 22, 43, .16);
 /* «Бесплатная замена»: снизу без внешнего отступа — расстояние до «Каких специалистов можно привлечь»
    задаёт только верхний отступ следующей секции, как между остальными блоками */
 .replacement-section { margin-bottom: 0; }
+
+/* FAQ «Какие есть способы привлечения»: под описанием способа — «Что важно учитывать» из бывших карточек */
+.faq-methods { gap: 14px; }
+.faq-methods-note { display: block; margin-top: 6px; padding-left: 12px; border-left: 2px solid rgba(10, 156, 149, .35); font-size: .9375rem; opacity: .85; }
+.faq-methods-note b { font-weight: 550; }
