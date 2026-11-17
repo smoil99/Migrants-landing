@@ -3191,3 +3191,65 @@ footer .footer-top, footer .footer-bottom { border-color: rgba(10, 22, 43, .16);
 .faq-methods { gap: 14px; }
 .faq-methods-note { display: block; margin-top: 6px; padding-left: 12px; border-left: 2px solid rgba(10, 156, 149, .35); font-size: .9375rem; opacity: .85; }
 .faq-methods-note b { font-weight: 550; }
+
+/* Шапка: справа кнопка «Зарегистрироваться» и ☰ на всех ширинах; разделы — только в выпадающем меню.
+   Шрифт кнопки — как у пунктов меню шапки (.82rem); на телефоне подпись «Регистрация» (.cta-short) */
+.site-header .header-actions { display: flex; align-items: center; gap: 12px; margin-left: auto; }
+.site-header .menu-button { display: block; }
+.site-header .header-cta { min-height: 38px; padding: 8px 18px; gap: 0; font-size: .82rem; line-height: 1.2; }
+.site-header .header-cta:hover { text-decoration: none; }
+
+.site-header .nav,
+.site-header .nav:not(.mobile-open) {
+  display: flex; flex-direction: column; gap: 0; padding: 12px 24px;
+  position: absolute; top: 100%; left: 0; right: 0;
+  font-size: 1rem;
+  background: #fff; box-shadow: 0 12px 20px #1a302a15;
+  visibility: hidden; opacity: 0; translate: 0 -8px; clip-path: inset(0 0 100% 0); pointer-events: none;
+  transition: opacity .25s ease, translate .35s cubic-bezier(.2, .8, .2, 1), clip-path .35s cubic-bezier(.2, .8, .2, 1), visibility 0s linear .35s;
+}
+.site-header .nav.mobile-open {
+  visibility: visible; opacity: 1; translate: 0 0; clip-path: inset(0 0 -40px 0); pointer-events: auto;
+  transition-delay: 0s;
+}
+.site-header .nav a,
+.site-header.is-dark .nav a { padding: 12px 0; color: var(--reg-black); font-size: .9375rem; opacity: 0; translate: 0 -6px; transition: opacity .2s ease, translate .25s ease, color .3s; }
+.site-header .nav.mobile-open a { opacity: 1; translate: 0 0; transition-delay: calc(80ms + var(--i, 0) * 35ms), calc(80ms + var(--i, 0) * 35ms), 0s; }
+/* на широких экранах меню — панель справа под кнопкой ☰, а не полоса во всю ширину */
+@media (width > 850px) {
+  .site-header .nav,
+  .site-header .nav:not(.mobile-open) {
+    left: auto; right: max(40px, (100% - 1240px) / 2); width: 300px; top: calc(100% + 8px);
+    border-radius: 20px; padding: 8px 24px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-header .nav, .site-header .nav a { transition: none; translate: none; }
+}
+/* у .button последний span увеличен (1.3rem, для стрелки) — подписи кнопки шапки держат её шрифт */
+.site-header .header-cta > span { font-size: inherit; }
+@media (width <= 420px) {
+  .site-header .header-actions { gap: 6px; }
+  .site-header .header-cta { padding: 8px 12px; }
+  .site-header .brand-duo .brand-logo { height: 17px; width: auto; }
+  .site-header .brand-duo .brand-sber { height: 16px; width: auto; }
+  .site-header .brand.brand-duo { column-gap: 6px; }
+}
+
+/* Над первым экраном (.is-over-hero — шапка без подложки) кнопки «Зарегистрироваться» нет.
+   На десктопе (> 1100 px) там же разделы снова строкой, как раньше, без кнопки ☰; кнопка и меню ☰
+   появляются, когда шапка получает подложку (прокрутка ко второй секции). На телефоне/планшете над первым экраном — только ☰ */
+.site-header.is-over-hero .header-cta { display: none; }
+@media (width > 1100px) {
+  .site-header.is-over-hero .header-actions { display: none; }
+  .site-header.is-over-hero .nav,
+  .site-header.is-over-hero .nav:not(.mobile-open) {
+    position: static; flex-direction: row; align-items: center; gap: 18px; width: auto; margin-left: auto; padding: 0;
+    font-size: .78rem; background: none; box-shadow: none; border-radius: 0;
+    visibility: visible; opacity: 1; translate: none; clip-path: none; pointer-events: auto; transition: none;
+  }
+  .site-header.is-over-hero .nav a,
+  .site-header.is-over-hero.is-dark .nav a { padding: 0; color: #fff; font-size: inherit; opacity: 1; translate: none; transition: color .3s; }
+}
+@media (1100px < width <= 1260px) { .site-header.is-over-hero .nav:not(.mobile-open) { gap: 10px; } }
+@media (width > 1280px) { .site-header.is-over-hero .nav:not(.mobile-open) { gap: 20px; font-size: .82rem; } }
