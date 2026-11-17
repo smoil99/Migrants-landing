@@ -255,7 +255,7 @@ function renderResult() {
   // Связанные вопросы из FAQ
   const box = $('[data-result="faq"]', result);
   $$('button', box).forEach(b => b.remove());
-  const related = intent.industry === 'logistics' ? [1, 3, 5] : [2, 3, 9];
+  const related = intent.industry === 'logistics' ? [1, 3, 6] : [2, 3, 10];   // индексы после вопроса «Какие есть способы привлечения» (№ 4)
   related.forEach(i => {
     const q = $(`#faq-button-${i} span`)?.textContent.trim();
     if (!q) return;

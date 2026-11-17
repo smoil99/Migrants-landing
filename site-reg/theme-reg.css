@@ -3135,3 +3135,54 @@ footer .footer-top, footer .footer-bottom { border-color: rgba(10, 22, 43, .16);
   #uncertainty .methods-cta-art { grid-row: 2; margin-block: -4px; }
   #uncertainty .cta-buttons { grid-row: 3; position: relative; }
 }
+
+/* FAQ «Какие есть способы привлечения специалистов?» — бывший блок «Четыре способа привлечения» */
+.faq-methods { display: grid; gap: 10px; margin: 0 0 16px; padding-left: 1.2em; line-height: 1.6; }
+.faq-methods li::marker { color: #0a9c95; }
+.faq-methods strong { font-weight: 550; color: var(--ink, #202c31); }
+.faq-answer-inner .faq-note { font-size: .875rem; opacity: .75; }
+
+/* Карточки отраслей: чипсы компактнее — у всех карточек укладываются в 2 строки.
+   Фото — в исходных цветах; пастельный градиент карточки лежит поверх только у чипсов внизу
+   и плавно сходит на нет к фото (маска ::after). --ex-veil — высота сплошной зоны под чипсами */
+.ex-chips { gap: 6px; }
+.ex-chips .cs-glass { gap: 6px; padding: 6px 10px; border-radius: 10px; font-size: .8125rem; line-height: 1.3; white-space: nowrap; }
+.ex-media { --ex-veil: 120px; }
+.ex-media::before {
+  z-index: -2;
+  opacity: 1;
+  mix-blend-mode: normal;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+.ex-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: inherit;
+  -webkit-mask-image: linear-gradient(0deg, #000 0, #000 var(--ex-veil), transparent calc(var(--ex-veil) + 110px));
+  mask-image: linear-gradient(0deg, #000 0, #000 var(--ex-veil), transparent calc(var(--ex-veil) + 110px));
+}
+@media (width <= 580px) {
+  .ex-card { flex-basis: 90%; }
+  .ex-media { --ex-veil: 84px; padding: 14px; }
+  .ex-chips { gap: 4px; }
+  .ex-chips .cs-glass { padding: 5px 4px; border-radius: 8px; font-size: clamp(9px, 2.75vw, 12px); letter-spacing: -.01em; }
+  /* «Строительство» — 7 чипсов: в разметке сначала 4 коротких, затем 3 длинных, чтобы встали в 2 строки */
+}
+
+/* Карточки отраслей: без градиента поверх фото — чипсы стеклянные, размывают фото под собой */
+.ex-media::after { content: none; }
+.ex-chips .cs-glass {
+  color: var(--ink);
+  background: rgba(255, 255, 255, .6);                          /* осветлено на 30% (было .42) */
+  border-color: transparent;                                    /* без обводки */
+  box-shadow: 0 4px 16px rgba(10, 22, 43, .12);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  backdrop-filter: blur(14px) saturate(160%);
+}
+
+/* «Бесплатная замена»: снизу без внешнего отступа — расстояние до «Каких специалистов можно привлечь»
+   задаёт только верхний отступ следующей секции, как между остальными блоками */
+.replacement-section { margin-bottom: 0; }
